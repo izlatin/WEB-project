@@ -11,7 +11,7 @@ login_manager.init_app(app)
 
 
 def main():
-    # db_session.global_init("db/barter.db")
+    db_session.global_init("db/barter.db")
     # db_sess = db_session.create_session()
 
     app.run()
@@ -26,6 +26,11 @@ def index():
 @app.route('/login')
 def login():
     return 'login'
+
+
+@app.route('/register')
+def sign_up():
+    return 'register'
 
 
 @login_manager.user_loader
