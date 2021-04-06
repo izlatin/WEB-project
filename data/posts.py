@@ -1,0 +1,46 @@
+import datetime
+import sqlalchemy
+from flask_login import current_user
+from flask_wtf import FlaskForm
+from sqlalchemy import orm
+from wtforms import StringField, BooleanField, SubmitField, IntegerField, TextAreaField
+from wtforms.validators import DataRequired
+
+from .db_session import SqlAlchemyBase
+
+
+class Post(SqlAlchemyBase):
+    __tablename__ = 'posts'
+
+    id = sqlalchemy.Column(sqlalchemy.Integer,
+                           primary_key=True, autoincrement=True)
+    title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    image = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    creator = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
+    description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    tags = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    start_date = sqlalchemy.Column(sqlalchemy.DateTime,
+                                   default=datetime.datetime.now)
+    end_date = sqlalchemy.Column(sqlalchemy.DateTime,
+                                 default=datetime.datetime.now)
+    user = orm.relation("User")
+
+    def __repr__(self):
+        return f'<Post> {self.job}'
+
+
+class PostForm(FlaskForm):
+    title = StringField('Заголовок')
+    description = TextAreaField('Описание товара', validators=[DataRequired()])
+
+    tags = StringField('Теги')
+    submit = SubmitField('Добавить')
+#
+#
+# class JobsEditForm(FlaskForm):
+#     job = StringField('Работа', validators=[DataRequired()])
+#     team_leader = IntegerField('id тимлидера')
+#     work_size = IntegerField('Длительность работы')
+#     collaborators = StringField('Сотрудники')
+#     is_finished = BooleanField("Завершено")
+#     submit = SubmitField('Сохранить')
