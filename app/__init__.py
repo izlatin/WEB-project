@@ -10,9 +10,9 @@ db_session.global_init("barter.db")
 login_manager = LoginManager()
 oauth = OAuth2Provider()
 
+db_sess = db_session.create_session()
 @login_manager.user_loader
 def load_user(user_id):
-    db_sess = db_session.create_session()
     return db_sess.query(models.User).get(user_id)
 
 

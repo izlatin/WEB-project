@@ -1,11 +1,14 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
+from wtforms.validators import DataRequired, Length
 
 
 class RegisterForm(FlaskForm):
-    # TODO can be an email !!!
-    username = StringField('Login', validators=[DataRequired()])
+    surname = StringField('Surname', validators=[Length(min=6, max=35), DataRequired()])
+    name = StringField('Name', validators=[Length(min=6, max=35), DataRequired()])
+    age = IntegerField('Age', validators=[DataRequired()])
+    email = StringField('Email', validators=[Length(min=6, max=35), DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Sign up me')
+    
