@@ -1,17 +1,15 @@
-# from app import app
 from flask import render_template, Blueprint, redirect
 from flask_login import current_user, login_user
 
+from app import db_session
+from app.models import Post, PostForm, User, LoginForm
 main = Blueprint('main', __name__)
 
-from models import Post, PostForm, User, LoginForm
-from app import db_session
 
 @main.route('/')
 @main.route('/index')
 def index():
     return render_template('index.html')
-    # return 'index'
 
 
 @main.route("/create_post", methods=['GET', 'POST'])

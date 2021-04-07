@@ -1,5 +1,5 @@
 from flask.blueprints import Blueprint
-from flask import url_for, flash
+from flask import url_for, flash, current_app
 from flask.globals import request
 from flask.templating import render_template
 from flask_login import login_manager, login_user, current_user, logout_user, login_required
@@ -7,8 +7,8 @@ from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 from werkzeug.security import check_password_hash
 
-from forms import login_form, register_form
-from models import User
+from app.forms import login_form, register_form
+from app.models.user import User
 
 auth = Blueprint('auth', __name__)
 
@@ -23,6 +23,7 @@ def login():
         flash('The form is incorrect')
         return render_template('login.html', form=form)
     
+    print(User)
     user = User.query.filter_by(username=form.username.data).first()
     if user and user.check_password(form.password.data):
         login_user(user, remember=form.remember_me.data)
@@ -43,15 +44,14 @@ def register():
     if not form.validate_on_submit():
         flash('The form is incorrect')
         return render_template('register.html', form=form)
-    
     user = User.query.filter_by(username=form.username.data)
     if user:
         flash('User with this username is alredy registered')
         return render_template('register.html', form=form)
     
-    user = User(
-        surname=form.username.data,
-        last_name=form.)
+    # user = User(
+    #     surname=form.username.data,
+    #     last_name=form.)
     
     flash('Uncaught error')
     return render_template('register.html', form=form)
