@@ -2,20 +2,20 @@
 from flask import render_template, Blueprint, redirect
 from flask_login import current_user, login_user
 
-page = Blueprint('page', __name__)
+main = Blueprint('main', __name__)
 
 from models import Post, PostForm, User, LoginForm
 from app import db_session
 
 
-@page.route('/')
-@page.route('/index')
+@main.route('/')
+@main.route('/index')
 def index():
     return render_template('index.html')
     # return 'index'
 
 
-@page.route('/login', methods=['GET', 'POST'])
+@main.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -30,12 +30,12 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
-@page.route('/register')
+@main.route('/register')
 def sign_up():
     return 'register'
 
 
-@page.route("/create_post", methods=['GET', 'POST'])
+@main.route("/create_post", methods=['GET', 'POST'])
 def create_post():
     form = PostForm()
     if form.validate_on_submit():
