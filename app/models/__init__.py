@@ -1,2 +1,2 @@
-from .user import User
+from .user import User, LoginForm
 from .posts import Post, PostForm

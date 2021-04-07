@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect
-from flask_login import current_user, LoginManager
+from flask_login import current_user, LoginManager, login_user
 from flask_oauthlib.provider import OAuth2Provider
 
 import db_session
@@ -30,7 +30,6 @@ def load_user(user_id):
 def main():
     
     db_session.global_init("barter.db")
-    # db_sess = db_session.create_session()
     app.run(host='127.0.0.1', port=5000, debug=True, threaded=True)
 
 
