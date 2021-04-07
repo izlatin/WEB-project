@@ -8,7 +8,7 @@ from werkzeug.utils import redirect
 from werkzeug.security import check_password_hash
 
 from app.forms import login_form, register_form
-from app.models.user import User
+from app.models import User
 
 auth = Blueprint('auth', __name__)
 
