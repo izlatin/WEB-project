@@ -20,15 +20,18 @@ def login():
     
     form = login_form.LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user, remember=form.remember_me.data)
-            next_page = request.args.get('next')
-            
-            return redirect(next_page or url_for('main.index'))
+        flash('The form is incorrect')
+        return render_template('login.html', form=form)
+    
+    user = User.query.filter_by(username=form.username.data).first()
+    if user and user.check_password(form.password.data):
+        login_user(user, remember=form.remember_me.data)
+        next_page = request.args.get('next')
         
+        return redirect(next_page or url_for('main.index'))
+    
     # say that validation failed
-    flash('Wrong username or password')
+    flash('Uncaught error')
     return render_template('login.html', form=form)
 
 @auth.route('/register')
@@ -41,6 +44,17 @@ def register():
         flash('The form is incorrect')
         return render_template('register.html', form=form)
     
+    user = User.query.filter_by(username=form.username.data)
+    if user:
+        flash('User with this username is alredy registered')
+        return render_template('register.html', form=form)
+    
+    user = User(
+        surname=form.username.data,
+        last_name=form.)
+    
+    flash('Uncaught error')
+    return render_template('register.html', form=form)
     
 
 @auth.route('/account')
