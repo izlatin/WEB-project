@@ -8,7 +8,7 @@ from routes import auth, main_page
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
-app.register_blueprint(main_page.main_page)
+app.register_blueprint(main_page.page)
 app.config['SECRET_KEY'] = 'barter_shop_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)

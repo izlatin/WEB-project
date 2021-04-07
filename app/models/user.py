@@ -5,7 +5,7 @@ from flask_login import UserMixin
 from sqlalchemy import orm
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from db_session import SqlAlchemyBase
+from app.db_session import SqlAlchemyBase
 
 
 class User(SqlAlchemyBase, UserMixin):
@@ -21,7 +21,7 @@ class User(SqlAlchemyBase, UserMixin):
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                       default=datetime.datetime.now)
 
-    posts = orm.relation("posts", back_populates="user")
+    posts = orm.relation("Post", back_populates="user")
 
     def __repr__(self):
         return f'<User> {self.id} {self.name} {self.surname}'
