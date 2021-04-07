@@ -2,8 +2,8 @@ from flask import Flask, render_template, redirect
 from flask_login import current_user, LoginManager
 from flask_oauthlib.provider import OAuth2Provider
 
-from models import User
 import db_session
+
 from routes import auth, main_page
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -20,6 +20,7 @@ login_manager.blueprint_login_views = {
 }
 
 
+from models import User
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()

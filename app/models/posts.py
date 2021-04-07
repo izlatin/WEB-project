@@ -6,10 +6,10 @@ from sqlalchemy import orm
 from wtforms import StringField, BooleanField, SubmitField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired
 
-from app.db_session import SqlAlchemyBase
+from app import db_session
 
 
-class Post(SqlAlchemyBase):
+class Post(db_session.SqlAlchemyBase):
     __tablename__ = 'posts'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,

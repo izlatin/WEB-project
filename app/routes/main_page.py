@@ -1,12 +1,11 @@
 # from app import app
 from flask import render_template, Blueprint, redirect
 from flask_login import current_user
-from app.models.posts import PostForm, Post
-from app import db_session
 
+# from app import db_session
 
-main_page = Blueprint('main_main', __name__)
-
+main_page = Blueprint('main_page', __name__)
+from models import PostForm, Post
 
 @main_page.route('/')
 @main_page.route('/index')
