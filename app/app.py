@@ -19,6 +19,7 @@ login_manager.blueprint_login_views = {
     'main_page': '/',
 }
 
+
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
@@ -29,7 +30,7 @@ def main():
     
     db_session.global_init("barter.db")
     # db_sess = db_session.create_session()
-    app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)
+    app.run(host='127.0.0.1', port=5000, debug=True, threaded=True)
 
 
 if __name__ == '__main__':

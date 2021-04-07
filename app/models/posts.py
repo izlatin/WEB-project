@@ -6,7 +6,7 @@ from sqlalchemy import orm
 from wtforms import StringField, BooleanField, SubmitField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired
 
-from .db_session import SqlAlchemyBase
+from app.db_session import SqlAlchemyBase
 
 
 class Post(SqlAlchemyBase):
