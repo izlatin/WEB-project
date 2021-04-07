@@ -21,7 +21,6 @@ def login():
     
     form = login_form.LoginForm()
     if not form.validate_on_submit():
-        flash('The form is incorrect')
         return render_template('login.html', form=form)
     
     user = db_sess.query(User).filter_by(email=form.email.data).first()
@@ -65,8 +64,14 @@ def register():
     else:
         db_sess.commit()
     
-    return redirect(url_for('.login'))
-    
+    login_user(user, remember=form.remember_me.data)
+    return redirect(url_for('.account'))
+  
+@auth.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('main.index'))
 
 @auth.route('/account', methods=['GET'])
 @login_required

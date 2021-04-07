@@ -28,13 +28,6 @@ class Post(db_session.SqlAlchemyBase):
     def __repr__(self):
         return f'<Post> {self.title}'
 
-
-class PostForm(FlaskForm):
-    title = StringField('Заголовок')
-    description = TextAreaField('Описание товара', validators=[DataRequired()])
-
-    tags = StringField('Теги')
-    submit = SubmitField('Добавить')
 #
 #
 # class JobsEditForm(FlaskForm):

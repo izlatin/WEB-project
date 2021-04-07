@@ -2,7 +2,8 @@ from flask import render_template, Blueprint, redirect
 from flask_login import current_user, login_user
 
 from app import db_session
-from app.models import Post, PostForm, User
+from app.models import Post, User
+from app.forms import PostForm
 main = Blueprint('main', __name__)
 
 
