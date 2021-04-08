@@ -18,44 +18,46 @@ auth = Blueprint('auth', __name__)
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('.account'))
-    
+
     form = login_form.LoginForm()
     if not form.validate_on_submit():
         return render_template('login.html', form=form)
-    
+
     user = db_sess.query(User).filter_by(email=form.email.data).first()
     if user and user.check_password(form.password.data):
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
-        
+
         return redirect(next_page or url_for('main.index'))
-    
+
     # say that validation failed
     flash("User doesn't exist")
     return render_template('login.html', form=form)
 
+
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('.account'))
-    
+        # return redirect(url_for('.account'))
+        return redirect('/')
+
     form = register_form.RegisterForm()
     if not form.validate_on_submit():
-        flash('The form is incorrect')
+        # flash('The form is incorrect')
         return render_template('register.html', form=form)
-    
+
     user = db_sess.query(User).filter_by(email=form.email.data).first()
     if user:
         flash('User with this email is alredy registered')
         return render_template('register.html', form=form)
-    
+
     user = User(
         email=form.email.data,
         surname=form.surname.data,
         name=form.name.data,
         age=form.age.data,
-        )
-    
+    )
+
     user.set_password(form.password.data)
     try:
         db_sess.add(user)
@@ -63,15 +65,17 @@ def register():
         session.rollback()
     else:
         db_sess.commit()
-    
+
     login_user(user, remember=form.remember_me.data)
-    return redirect(url_for('.account'))
-  
+    return redirect('/')
+
+
 @auth.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
+
 
 @auth.route('/account', methods=['GET'])
 @login_required
