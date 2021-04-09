@@ -4,25 +4,25 @@ import datetime
 
 from flask_login.utils import login_required
 
-from app import db_session
+from app import db_sess
 from app.models import Post, User
 from app.forms import PostForm, EditProfileForm, ChangePasswordForm
 
-main = Blueprint('main', __name__)
+bp = Blueprint('main', __name__)
 
 
-@main.route('/')
-@main.route('/index')
+@bp.route('/')
+@bp.route('/index')
 def index():
     return render_template('index.html')
 
 
-@main.route("/create_post", methods=['GET', 'POST'])
+@bp.route("/create_post", methods=['GET', 'POST'])
 @login_required
 def create_post():
     form = PostForm()
     if form.validate_on_submit():
-        db_sess = db_session.create_session()
+        # db_sess = db_session.create_session()
         post = Post()
         post.title = form.title.data
         post.description = form.description.data

@@ -13,10 +13,10 @@ from app.models import Post, User
 from app.forms import PostForm, EditProfileForm, ChangePasswordForm
 from app import db_sess
 
-auth = Blueprint('auth', __name__)
+bp = Blueprint('auth', __name__)
 
 
-@auth.route('/login', methods=['GET', 'POST'])
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = login_form.LoginForm()
     if not form.validate_on_submit():
@@ -37,7 +37,7 @@ def login():
     return render_template('login.html', form=form)
 
 
-@auth.route('/register', methods=['GET', 'POST'])
+@bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect('/')
@@ -71,21 +71,21 @@ def register():
     return redirect('/')
 
 
-@auth.route('/logout', methods=['GET', 'POST'])
+@bp.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
 
 
-@auth.route('/profile')
+@bp.route('/profile')
 def profile():
     user = db_sess.query(User).filter(User.id == current_user.id).first()
     posts = db_sess.query(Post).filter(Post.creator == current_user.id).count()
     return render_template("profile.html", user=user, posts_num=posts)
 
 
-@auth.route('/profile/edit', methods=['GET', 'POST'])
+@bp.route('/profile/edit', methods=['GET', 'POST'])
 def edit_profile():
     user = db_sess.query(User).filter(User.id == current_user.id).first()
     form = EditProfileForm()
@@ -100,21 +100,22 @@ def edit_profile():
     return render_template("edit_profile.html", user=user, form=form)
 
 
-@auth.route('/profile/change_password', methods=['GET', 'POST'])
+@bp.route('/profile/change_password', methods=['GET', 'POST'])
 def change_password():
     user = db_sess.query(User).filter(User.id == current_user.id).first()
     form = ChangePasswordForm()
-    if form.validate_on_submit():
-        checked = user.check_password(form.old_password.data)
-        if checked and form.new_password.data == form.repeat_password.data:
-            user.set_password(form.new_password.data)
-            db_sess.merge(user)
-            db_sess.commit()
-            return redirect('/profile')
-        elif not checked:
-            flash('Incorrect old password')
-            return render_template('change_password.html', form=form, user=user)
-        else:
-            flash('Passwords do not match')
-            return render_template('change_password.html', form=form, user=user)
-    return render_template('change_password.html', form=form, user=user)
+    if not form.validate_on_submit():
+        return render_template('change_password.html', form=form, user=user)
+    
+    checked = user.check_password(form.old_password.data)
+    if checked and form.new_password.data == form.repeat_password.data:
+        user.set_password(form.new_password.data)
+        db_sess.merge(user)
+        db_sess.commit()
+        return redirect('/profile')
+    elif not checked:
+        flash('Incorrect old password')
+        return render_template('change_password.html', form=form, user=user)
+    else:
+        flash('Passwords do not match')
+        return render_template('change_password.html', form=form, user=user)
