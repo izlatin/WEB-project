@@ -17,6 +17,8 @@ def index():
 
 @main.route("/create_post", methods=['GET', 'POST'])
 def create_post():
+    if not current_user.is_authenticated:
+        return redirect('/login')
     form = PostForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
