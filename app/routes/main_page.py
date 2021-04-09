@@ -2,6 +2,8 @@ from flask import render_template, Blueprint, redirect, flash
 from flask_login import current_user, login_user
 import datetime
 
+from flask_login.utils import login_required
+
 from app import db_session
 from app.models import Post, User
 from app.forms import PostForm, EditProfileForm, ChangePasswordForm
@@ -16,9 +18,8 @@ def index():
 
 
 @main.route("/create_post", methods=['GET', 'POST'])
+@login_required
 def create_post():
-    if not current_user.is_authenticated:
-        return redirect('/login')
     form = PostForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()

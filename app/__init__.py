@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, url_for
 from flask_login import current_user, LoginManager, login_user
 from flask_oauthlib.provider import OAuth2Provider
 
@@ -35,4 +35,6 @@ def create_app():
     login_manager.blueprint_login_views = {
         'main': '/',
     }
+    login_manager.unauthorized_handler(lambda: redirect(url_for('auth.login')))
+    
     return app
