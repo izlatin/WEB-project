@@ -1,9 +1,10 @@
-from flask import render_template, Blueprint, redirect
+from flask import render_template, Blueprint, redirect, flash
 from flask_login import current_user, login_user
+import datetime
 
 from app import db_session
 from app.models import Post, User
-from app.forms import PostForm
+from app.forms import PostForm, EditProfileForm, ChangePasswordForm
 
 main = Blueprint('main', __name__)
 

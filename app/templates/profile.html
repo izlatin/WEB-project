@@ -1,0 +1,16 @@
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+</head>
+<body>
+    {% extends "base.html" %}
+    {% block content %}
+        <h2>{{user.name}} {{user.surname}}</h2>
+        <div>Age: {{user.age}}</div>
+        <div>Email: {{user.email}}</div>
+        <div>Number of posts: {{posts_num}}</div>
+    <a href="/profile/change_password">Change password</a><br>
+    <button class="btn btn-primary" onclick="window.location.href='/profile/edit';">Edit profile</button>
+    {% endblock %}
+</body>
+</html>

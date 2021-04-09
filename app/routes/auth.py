@@ -6,9 +6,11 @@ from flask_login import login_manager, login_user, current_user, logout_user, lo
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 from werkzeug.security import check_password_hash
+import datetime
 
 from app.forms import login_form, register_form
-from app.models import User
+from app.models import Post, User
+from app.forms import PostForm, EditProfileForm, ChangePasswordForm
 from app import db_sess
 
 auth = Blueprint('auth', __name__)
@@ -16,9 +18,6 @@ auth = Blueprint('auth', __name__)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('.account'))
-
     form = login_form.LoginForm()
     if not form.validate_on_submit():
         return render_template('login.html', form=form)
@@ -31,7 +30,10 @@ def login():
         return redirect(next_page or url_for('main.index'))
 
     # say that validation failed
-    flash("User doesn't exist")
+    if user:
+        flash("Wrong password")
+    else:
+        flash("User doesn't exist")
     return render_template('login.html', form=form)
 
 
@@ -77,7 +79,43 @@ def logout():
     return redirect(url_for('main.index'))
 
 
-@auth.route('/account', methods=['GET'])
-@login_required
-def account():
-    return 'account'
+@auth.route('/profile')
+def profile():
+    user = db_sess.query(User).filter(User.id == current_user.id).first()
+    posts = db_sess.query(Post).filter(Post.creator == current_user.id).count()
+    return render_template("profile.html", user=user, posts_num=posts)
+
+
+@auth.route('/profile/edit', methods=['GET', 'POST'])
+def edit_profile():
+    user = db_sess.query(User).filter(User.id == current_user.id).first()
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        user.name = form.name.data
+        user.surname = form.surname.data
+        user.age = form.age.data
+        user.modified_date = datetime.datetime.now()
+        db_sess.merge(user)
+        db_sess.commit()
+        return redirect('/profile')
+    return render_template("edit_profile.html", user=user, form=form)
+
+
+@auth.route('/profile/change_password', methods=['GET', 'POST'])
+def change_password():
+    user = db_sess.query(User).filter(User.id == current_user.id).first()
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        checked = user.check_password(form.old_password.data)
+        if checked and form.new_password.data == form.repeat_password.data:
+            user.set_password(form.new_password.data)
+            db_sess.merge(user)
+            db_sess.commit()
+            return redirect('/profile')
+        elif not checked:
+            flash('Incorrect old password')
+            return render_template('change_password.html', form=form, user=user)
+        else:
+            flash('Passwords do not match')
+            return render_template('change_password.html', form=form, user=user)
+    return render_template('change_password.html', form=form, user=user)

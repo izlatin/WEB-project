@@ -11,3 +11,11 @@ class RegisterForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Sign up me')
+
+
+class EditProfileForm(FlaskForm):
+    surname = StringField('Surname', validators=[Length(max=35), DataRequired()])
+    name = StringField('Name', validators=[Length(max=35), DataRequired()])
+    age = IntegerField('Age', validators=[DataRequired()])
+    submit = SubmitField('Save')
+
