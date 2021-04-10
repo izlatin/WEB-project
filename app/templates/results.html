@@ -1,0 +1,10 @@
+{%extends "base.html"%}
+{% block content%}
+    <h1>Hello Results Page!</h1>
+    <a href="{{ url_for('main.create_post') }}">Back</a><p>
+    <ul>
+    {% for file_url in file_urls %}
+        <li><img style="height: 150px" src="{{ file_url }}"></li>
+    {% endfor %}
+    </ul>
+{%endblock%}

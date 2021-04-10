@@ -1,11 +1,15 @@
 from flask import Flask, render_template, redirect
 from flask_login import current_user, LoginManager, login_user
 from flask_oauthlib.provider import OAuth2Provider
+from flask_dropzone import Dropzone
+from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
+import os
 
 from . import db_session
 from .models.user import User
 
 db_session.global_init("barter.db")
+photos = None
 
 login_manager = LoginManager()
 oauth = OAuth2Provider()
@@ -19,6 +23,7 @@ def load_user(user_id):
 
 
 def create_app():
+    global photos
     app = Flask(__name__, template_folder='templates', static_folder='static')
     app.config['SECRET_KEY'] = 'b@rter_2hop_secre3_key'
     app.config['TESTING'] = False
