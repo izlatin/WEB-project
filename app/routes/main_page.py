@@ -1,5 +1,3 @@
-from flask import render_template, Blueprint, redirect, flash, session, request, url_for
-from flask_login import current_user
 
 from app import db_session, photos, db_sess
 from app.models import Post
@@ -9,13 +7,13 @@ main = Blueprint('main', __name__)
 post_form = None
 post_id = 0
 
-@main.route('/')
-@main.route('/index')
+@bp.route('/')
+@bp.route('/index')
 def index():
     return render_template('index.html')
 
 
-@main.route('/add_images', methods=['GET', 'POST'])
+@bp.route('/add_images', methods=['GET', 'POST'])
 def results():
     global post_form, post_id
     post = db_sess.query(Post).filter(Post.id == post_id).first()
