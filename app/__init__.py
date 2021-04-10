@@ -1,3 +1,7 @@
+import os
+# TODO ONLY for DEBUG to allow http requests instead of https
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
 from flask import Flask, render_template, redirect, url_for
 from flask_login import current_user, LoginManager, login_user
 
@@ -26,6 +30,8 @@ db_sess = db_session.create_session()
 
 from app.models import User
 from app.models import OAuth2Client, OAuth2Token, OAuth2AuthorizationCode
+
+
 class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
     TOKEN_ENDPOINT_AUTH_METHODS = [
         'client_secret_basic',
@@ -65,7 +71,7 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
 
 class PasswordGrant(grants.ResourceOwnerPasswordCredentialsGrant):
     def authenticate_user(self, username, password):
-        user = db_sess.query(User).filter_by(username=username).first()
+        user = db_sess.query(User).filter_by(email=username).first()
         if user is not None and user.check_password(password):
             return user
 
@@ -94,7 +100,6 @@ require_oauth = ResourceProtector()
 
 @login_manager.user_loader
 def load_user(userid):
-    print(userid)
     return db_sess.query(User).get(userid)
 
 def config_oauth(app):

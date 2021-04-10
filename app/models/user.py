@@ -26,9 +26,9 @@ class User(SqlAlchemyBase, UserMixin):
 
     posts = relation('Post', back_populates='user')
     
-    oauth2_client = relation('OAuth2Client', back_populates='user')
-    oauth2_code = relation('OAuth2AuthorizationCode', back_populates='user')
-    oauth2_token = relation('OAuth2Token', back_populates='user')
+    oauth2_client = relation('OAuth2Client', back_populates='user', uselist=False)
+    oauth2_code = relation('OAuth2AuthorizationCode', back_populates='user', uselist=False)
+    oauth2_token = relation('OAuth2Token', back_populates='user', uselist=False)
     
 
     def __repr__(self):
@@ -40,6 +40,8 @@ class User(SqlAlchemyBase, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.hashed_password, password)
 
+    def get_user_id(self):
+        return self.get_id()
 # class LoginForm(FlaskForm):
 #     email = EmailField('Почта', validators=[DataRequired()])
 #     password = PasswordField('Пароль', validators=[DataRequired()])

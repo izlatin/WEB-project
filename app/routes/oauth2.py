@@ -1,8 +1,8 @@
 import time
 
-from flask import session, request, redirect, url_for, render_template, jsonify
+from flask import redirect, request, redirect, url_for, render_template, jsonify
 from flask.blueprints import Blueprint
-from flask_login.utils import login_required
+from flask_login.utils import login_required, current_user, logout_user
 from werkzeug.security import gen_salt
 from authlib.integrations.flask_oauth2 import current_token
 from authlib.oauth2 import OAuth2Error
@@ -16,28 +16,19 @@ from app import db_sess
 bp = Blueprint('oauth2', __name__, url_prefix='/oauth')
 
 
-def current_user():
-    if 'id' in session:
-        uid = session['id']
-        return db_sess.query(User).get(uid)
-    return None
-
-
 def split_by_crlf(s):
     return [v for v in s.splitlines() if v]
 
 
 @bp.route('/logout')
 def logout():
-    del session['id']
+    logout_user()
     return redirect('/')
 
 
 @bp.route('/create_client', methods=['GET', 'POST'])
+@login_required
 def create_client():
-    user = current_user()
-    if not user:
-        return redirect('/')
     if request.method == 'GET':
         return render_template('create_client.html')
 
@@ -46,7 +37,7 @@ def create_client():
     client = OAuth2Client(
         client_id=client_id,
         client_id_issued_at=client_id_issued_at,
-        user_id=user.id,
+        user_id=current_user.id,
     )
 
     form = request.form
@@ -66,24 +57,20 @@ def create_client():
     else:
         client.client_secret = gen_salt(48)
 
-    db_sess.session.add(client)
-    db_sess.session.commit()
+    db_sess.add(client)
+    db_sess.commit()
     return redirect('/')
 
 
 @bp.route('/authorize', methods=['GET', 'POST'])
 def authorize():
-    user = current_user()
-    # if user log status is not true (Auth server), then to log it in
-    if not user:
-        return redirect(url_for('website.routes.home', next=request.url))
     if request.method == 'GET':
         try:
-            grant = authorization.validate_consent_request(end_user=user)
+            grant = authorization.validate_consent_request(end_user=current_user)
         except OAuth2Error as error:
             return error.error
-        return render_template('authorize.html', user=user, grant=grant)
-    if not user and 'email' in request.form:
+        return render_template('authorize.html', user=current_user, grant=grant)
+    if not current_user and 'email' in request.form:
         email = request.form.get('email')
         user = db_sess.query(User).filter_by(email=email).first()
     if request.form['confirm']:

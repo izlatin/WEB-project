@@ -22,7 +22,7 @@ class OAuth2Client(SqlAlchemyBase, OAuth2ClientMixin):
     id = Column(Integer, primary_key=True)
     user_id = Column(
         Integer, ForeignKey('User.id', ondelete='CASCADE'))
-    # user = relation('User', back_populates='oauth2_client')
+    user = relation('User')
 
 
 class OAuth2AuthorizationCode(SqlAlchemyBase, OAuth2AuthorizationCodeMixin):
@@ -31,7 +31,7 @@ class OAuth2AuthorizationCode(SqlAlchemyBase, OAuth2AuthorizationCodeMixin):
     id = Column(Integer, primary_key=True)
     user_id = Column(
         Integer, ForeignKey('User.id', ondelete='CASCADE'))
-    # user = relation('User', back_populates='oauth2_code')
+    user = relation('User')
 
 
 class OAuth2Token(SqlAlchemyBase, OAuth2TokenMixin):
@@ -40,7 +40,7 @@ class OAuth2Token(SqlAlchemyBase, OAuth2TokenMixin):
     id = Column(Integer, primary_key=True)
     user_id = Column(
         Integer, ForeignKey('User.id', ondelete='CASCADE'))
-    user = relation('User', back_populates='oauth2_token')
+    user = relation('User')
 
     def is_refresh_token_active(self):
         if self.revoked:
@@ -62,7 +62,7 @@ class OAuth2Token(SqlAlchemyBase, OAuth2TokenMixin):
 #     description = Column(String(400))
 
 #     # creator of the client, not required
-#     user_id = Column(ForeignKey('user.id'))
+#     user_id = Column(ForeignKey('User.id'))
 #     # required if you need to support client credential
 #     user = orm.relation('User', back_populates='client')
 
@@ -103,7 +103,7 @@ class OAuth2Token(SqlAlchemyBase, OAuth2TokenMixin):
 #     id = Column(Integer, primary_key=True)
 
 #     user_id = Column(
-#         Integer, ForeignKey('user.id', ondelete='CASCADE')
+#         Integer, ForeignKey('User.id', ondelete='CASCADE')
 #     )
 #     user = orm.relation('User', back_populates='grant')
 
@@ -146,7 +146,7 @@ class OAuth2Token(SqlAlchemyBase, OAuth2TokenMixin):
 #     client = orm.relation('Client', back_populates='token')
 
 #     user_id = Column(
-#         Integer, ForeignKey('user.id')
+#         Integer, ForeignKey('User.id')
 #     )
 #     user = orm.relation('User', back_populates='token')
 

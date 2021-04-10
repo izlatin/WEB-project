@@ -23,7 +23,7 @@ class Post(db_session.SqlAlchemyBase):
                                    default=datetime.datetime.now)
     end_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                  default=datetime.datetime.now)
-    user = orm.relation("User")
+    user = orm.relation('User')
 
     def __repr__(self):
         return f'<Post> {self.title}'
