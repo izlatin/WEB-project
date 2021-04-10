@@ -15,7 +15,7 @@ class Post(db_session.SqlAlchemyBase):
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    # image = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    images = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     creator = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('User.id'))
     description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     tags = sqlalchemy.Column(sqlalchemy.String, nullable=True)

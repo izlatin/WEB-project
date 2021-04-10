@@ -1,10 +1,51 @@
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+    {{ dropzone.load() }}
+    {{ dropzone.style('border: 2px dashed #0087F7; margin: 5%; min-height: 100px;') }}
+</head>
 {%extends "base.html"%}
 {% block content%}
-    <h1>Hello Results Page!</h1>
+<h1>Создание объявления</h1>
     <a href="{{ url_for('main.create_post') }}">Back</a><p>
-    <ul>
-    {% for file_url in file_urls %}
-        <li><img style="height: 150px" src="{{ file_url }}"></li>
-    {% endfor %}
-    </ul>
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.title.label }}<br>
+                {{ form.title(class="form-control", readonly=True) }}<br>
+                {% for error in form.title.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.description.label }}<br>
+                {{ form.description(class="form-control", readonly=True) }}<br>
+                {% for error in form.description.errors %}
+                    <p content="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.tags.label }}<br>
+                {{ form.tags(class="form-control", readonly=True) }}<br>
+                {% for error in form.tags.errors %}
+                    <p content="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+            {{message}}
+            <ul>
+            {% for file_url in file_urls %}
+                <li><img style="height: 50px" src="{{ file_url }}"></li>
+            {% endfor %}
+            </ul>
+            <input type="submit" class="btn btn-primary" name=submit value="Добавить">
+        </form>
+
+    {{ dropzone.create(action_view='main.results') }}
+
 {%endblock%}

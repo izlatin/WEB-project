@@ -1,8 +1,6 @@
 <head>
     <meta charset="UTF-8">
     <title>{{title}}</title>
-    {{ dropzone.load() }}
-    {{ dropzone.style('border: 2px dashed #0087F7; margin: 10%; min-height: 400px;') }}
 </head>
 <body>
     {% extends "base.html" %}
@@ -40,7 +38,6 @@
             <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
             {{message}}
         </form>
-    {{ dropzone.create(action_view='main.create_post') }}
     {% endblock %}
 </body>
 </html>
