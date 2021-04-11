@@ -1,20 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
-    {% for post in posts %}
+    {% for post, images in posts %}
     <div class="well">
         <div class="media">
-            <a class="pull-left" href="#">
-                <img src="data:image/png;base64,{{ post.image }}">
-            </a>
             <div class="media-body">
               <h4 class="media-heading">{{ post.title }}</h4>
-            <p class="text-right">{{ post.user.name }} {{ post.user.surname }}</p>
+                <p class="text-left">{{ post.user.name }} {{ post.user.surname }}</p>
+                {% for image in images%}
+                    <a class="pull-left" href="#">
+                        <img src="data:image/png;base64,{{ image }}" width="100" style="padding-right: 10px">
+                    </a>
+                {% endfor %}
+            </div>
             <p></p>
             <ul class="list-inline list-unstyled">
                 <li><span><i class="glyphicon glyphicon-calendar"></i>{{ post.start_date }}</span></li>
-              </ul>
-         </div>
-      </div>
+            </ul>
+        </div>
     </div>
     {% endfor %}
 {% endblock %}

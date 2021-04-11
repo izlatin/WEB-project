@@ -16,7 +16,12 @@ bp = Blueprint('main', __name__)
 @bp.route('/')
 @bp.route('/index')
 def index():
-    return render_template('index.html', posts=db_sess.query(Post).all())
+    posts = db_sess.query(Post).all()
+    images = list(map(lambda x: x.image.split(), posts))
+    data = []
+    for i in range(len(images)):
+        data.append([posts[i], images[i]])
+    return render_template('index.html', posts=data)
 
 
 @bp.route("/create_post", methods=['GET', 'POST'])
@@ -30,7 +35,9 @@ def create_post():
         post.description = form.description.data
         post.tags = form.tags.data
         post.creator = current_user.id
-        post.image = base64.b64encode(form.images.data[0].read()).decode('ascii')
+        post.image = ''
+        for image in form.images.data:
+            post.image += base64.b64encode(image.read()).decode('ascii') + ' '
         current_user.posts.append(post)
         db_sess.merge(current_user)
         db_sess.commit()

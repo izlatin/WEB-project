@@ -40,7 +40,10 @@
                 {{ form.images.lavel }}
                 {{ form.images(class="form-control", onchange="loadFile()") }}
                 <p>Preview</p>
-                <img id="output"/>
+                <div id="media">
+
+                </div>
+<!--                <img id="output" height="100px"/>-->
                 <!-- <td><input type="file" name="files[]" multiple/></td> -->
             </p>
             <p>
@@ -50,11 +53,18 @@
         </form>
     <script>
         function loadFile() {
-          var output = document.getElementById('output');
-          output.src = URL.createObjectURL(event.target.files[0]);
-          output.onload = function() {
-            URL.revokeObjectURL(output.src)
-          }
+            var i;
+            for (i = 0; i < event.target.files.length; i++) {
+              var paragraph = document.getElementById('media');
+              var output = document.createElement('img');
+              output.src = URL.createObjectURL(event.target.files[i]);
+              output.height = "100";
+              output.style = "padding-right: 10px";
+              output.onload = function() {
+                URL.revokeObjectURL(output.src)
+              };
+              paragraph.appendChild(output);
+            };
         };
     </script>
     {% endblock %}
