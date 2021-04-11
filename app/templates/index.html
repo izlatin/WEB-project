@@ -1,1 +1,20 @@
 {% extends "base.html" %}
+{% block content %}
+    {% for post in posts %}
+    <div class="well">
+        <div class="media">
+            <a class="pull-left" href="#">
+                <img src="data:image/png;base64,{{ post.image }}">
+            </a>
+            <div class="media-body">
+              <h4 class="media-heading">{{ post.title }}</h4>
+            <p class="text-right">{{ post.user.name }} {{ post.user.surname }}</p>
+            <p></p>
+            <ul class="list-inline list-unstyled">
+                <li><span><i class="glyphicon glyphicon-calendar"></i>{{ post.start_date }}</span></li>
+              </ul>
+         </div>
+      </div>
+    </div>
+    {% endfor %}
+{% endblock %}

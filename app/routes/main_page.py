@@ -1,6 +1,8 @@
 from flask import render_template, Blueprint, redirect, flash
 from flask_login import current_user, login_user
 import datetime
+import base64
+
 
 from flask_login.utils import login_required
 
@@ -14,7 +16,7 @@ bp = Blueprint('main', __name__)
 @bp.route('/')
 @bp.route('/index')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', posts=db_sess.query(Post).all())
 
 
 @bp.route("/create_post", methods=['GET', 'POST'])
@@ -28,6 +30,7 @@ def create_post():
         post.description = form.description.data
         post.tags = form.tags.data
         post.creator = current_user.id
+        post.image = base64.b64encode(form.images.data[0].read()).decode('ascii')
         current_user.posts.append(post)
         db_sess.merge(current_user)
         db_sess.commit()

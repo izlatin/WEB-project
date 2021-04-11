@@ -1,6 +1,6 @@
 import os
 # TODO ONLY for DEBUG to allow http requests instead of https
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
 
 from flask import Flask, render_template, redirect, url_for
 from flask_login import current_user, LoginManager, login_user

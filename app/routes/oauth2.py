@@ -66,7 +66,8 @@ def create_client():
 def authorize():
     if request.method == 'GET':
         try:
-            grant = authorization.validate_consent_request(end_user=current_user)
+            grant = authorization.validate_consent_request(
+                end_user=current_user)
         except OAuth2Error as error:
             return error.error
         return render_template('authorize.html', user=current_user, grant=grant)

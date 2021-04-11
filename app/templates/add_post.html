@@ -6,7 +6,7 @@
     {% extends "base.html" %}
     {% block content %}
         <h1>Создание объявления</h1>
-        <form action="" method="post">
+        <form action="" method="POST" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             <p>
                 {{ form.title.label }}<br>
@@ -28,16 +28,35 @@
             </p>
             <p>
                 {{ form.tags.label }}<br>
-                {{ form.tags(class="form-control") }}<br>
+                {{ form.tags(class="form-control", onchange="loadFile") }}<br>
                 {% for error in form.tags.errors %}
                     <p content="alert alert-danger" role="alert">
                         {{ error }}
                     </p>
                 {% endfor %}
             </p>
-            <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-            {{message}}
+            <p>
+                <td>Select Photo (one or multiple):</td>
+                {{ form.images.lavel }}
+                {{ form.images(class="form-control", onchange="loadFile()") }}
+                <p>Preview</p>
+                <img id="output"/>
+                <!-- <td><input type="file" name="files[]" multiple/></td> -->
+            </p>
+            <p>
+                <td colspan="2" align="center">Note: Supported image format: .jpeg, .jpg, .png, .gif</td>
+            </p>
+            <input type="submit" Submit>
         </form>
+    <script>
+        function loadFile() {
+          var output = document.getElementById('output');
+          output.src = URL.createObjectURL(event.target.files[0]);
+          output.onload = function() {
+            URL.revokeObjectURL(output.src)
+          }
+        };
+    </script>
     {% endblock %}
 </body>
 </html>
