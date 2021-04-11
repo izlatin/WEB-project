@@ -124,6 +124,7 @@ def create_app():
     app = Flask(__name__, template_folder='templates', static_folder='static')
     app.config['SECRET_KEY'] = 'b@rter_2hop_secre3_key'
     app.config['TESTING'] = False
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
     from .routes import auth, main_page, oauth2
     app.register_blueprint(main_page.bp)

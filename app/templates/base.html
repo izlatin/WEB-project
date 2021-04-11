@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
 <!--    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">-->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<!--    <link rel="stylesheet" href="../static/css/base.css">-->
+    <link rel="stylesheet" href="../static/css/base.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <title>{{ title }}</title>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-inverse">
+        <nav class="navbar navbar-inverse" style="font-size: 18px">
           <div class="container-fluid">
             <div class="navbar-header">
               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -33,8 +33,8 @@
                   {% if current_user.is_authenticated %}
                     <li class="dropdown">
                       <a class="dropdown-toggle" data-toggle="dropdown" href="/profile">{{current_user.name}}<span class="caret"></span></a>
-                      <ul class="dropdown-menu">
-                        <li><a href="/profile/posts">My posts</a></li>
+                      <ul class="dropdown-menu" style="font-size: 16px">
+                        <li><a href="/profile/my_posts">My posts</a></li>
                         <li><a href="/profile/archive">Archive</a></li>
                         <li><a href="/profile">Profile</a></li>
                         <li><a href="/logout">Logout</a></li>
