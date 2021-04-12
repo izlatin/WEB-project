@@ -56,3 +56,25 @@ def my_posts():
     for i in range(len(images)):
         data.append([posts[i], images[i]])
     return render_template('my_posts.html', posts=data)
+
+
+@bp.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
+def edit_post(post_id):
+    form = PostForm()
+    post = db_sess.query(Post).filter(
+        Post.id == post_id).first()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.description = form.description.data
+        post.tags = form.tags.data
+        for image in form.images.data:
+            post.image += base64.b64encode(image.read()).decode('ascii') + ' '
+        current_user.posts.append(post)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect('/')
+    images = [[i, post.image.split()[i - 1]] for i in range(1, len(post.image.split()) + 1)]
+    form.title.data = post.title
+    form.description.data = post.description
+    form.tags.data = post.tags
+    return render_template('edit_post.html', form=form, post=post, images=images)

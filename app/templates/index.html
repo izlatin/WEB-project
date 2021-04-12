@@ -4,8 +4,12 @@
     <div class="well">
         <div class="media">
             <div class="media-body">
+              {% if post.creator == current_user.id %}
+                <a href="/edit_post/{{post.id}}"><button class="pull-right btn btn-primary">Edit</button></a>
+              {% endif %}
               <h4 class="media-heading">{{ post.title }}</h4>
                 <p class="text-left">{{ post.user.name }} {{ post.user.surname }}</p>
+                <p class="text">{{ post.description }}</p>
                 {% for image in images%}
                     <a class="pull-left" href="#">
                         <img src="data:image/png;base64,{{ image }}" width="100" style="padding-right: 10px">

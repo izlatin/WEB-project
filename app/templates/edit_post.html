@@ -5,7 +5,8 @@
 <body>
     {% extends "base.html" %}
     {% block content %}
-        <h1>Создание объявления</h1>
+
+        <h1>Редактирование объявления</h1>
         <form action="" method="POST" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             <p>
@@ -28,7 +29,7 @@
             </p>
             <p>
                 {{ form.tags.label }}<br>
-                {{ form.tags(class="form-control", onchange="loadFile") }}<br>
+                {{ form.tags(class="form-control", onchange="loadFile()") }}<br>
                 {% for error in form.tags.errors %}
                     <p content="alert alert-danger" role="alert">
                         {{ error }}
@@ -36,14 +37,18 @@
                 {% endfor %}
             </p>
             <p>
-                <td>Select Photo (one or multiple):</td>
+                <p style="clear: both">Select Photo (one or multiple):</p>
                 {{ form.images.label }}
                 {{ form.images(class="form-control", onchange="loadFile()") }}
-                <div id="media">
+                <div id="media" style="padding: 10px">
+                    {% for image in images %}
+                        <img id={{image[0]}} src="data:image/png;base64,{{ image[1] }}"
+                             height="150" style="padding: 10px 10px">
+                        <button id='delete_{{image[0]}}' type='button'
+                                onclick="return deleteFile({{ image[0] }})"
+                                style="width: 30px, font-size: 10">remove</button>
+                    {% endfor %}</div>
 
-                </div>
-<!--                <img id="output" height="100px"/>-->
-                <!-- <td><input type="file" name="files[]" multiple/></td> -->
             </p>
             <p>
                 <td colspan="2" align="center">Note: Supported image format: .jpeg, .jpg, .png, .gif</td>
@@ -51,21 +56,40 @@
             <input type="submit" Submit>
         </form>
     <script>
+        var id = {{images[-1][0]}}
+
         function loadFile() {
             var i;
             for (i = 0; i < event.target.files.length; i++) {
               var paragraph = document.getElementById('media');
               var output = document.createElement('img');
               output.src = URL.createObjectURL(event.target.files[i]);
-              output.height = "100";
-              output.style = "padding-right: 10px";
+              output.height = "150";
+              id = id + 1;
+              output.id = id;
+              output.style = "padding: 10px 10px";
               output.onload = function() {
                 URL.revokeObjectURL(output.src)
               };
               paragraph.appendChild(output);
-            };
-        };
+              var delete_button = document.createElement('button');
+              delete_button.type = 'button';
+              delete_button.data = "remove";
+              delete_button.style = "width: 30px, font-size: 10";
+              delete_button.id = 'delete_' + String(id);
+              delete_button.onclick = 'return deleteFile(id)';
+              paragraph.appendChild(delete_button);
 
+              document.getElementById('delete_' + String(id)).innerHTML = 'remove';
+            };
+            };
+        function deleteFile(id) {
+            var image = document.getElementById(String(id));
+            image.parentNode.removeChild(image);
+            var del_im = document.getElementById('delete_' + String(id))
+            del_im.parentNode.removeChild(del_im);
+            return false;
+        };
     </script>
     {% endblock %}
 </body>
