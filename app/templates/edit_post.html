@@ -20,7 +20,7 @@
             </p>
             <p>
                 {{ form.description.label }}<br>
-                {{ form.description(class="form-control") }}<br>
+                {{ form.description(class="form-control", id="desc") }}<br>
                 {% for error in form.description.errors %}
                     <p content="alert alert-danger" role="alert">
                         {{ error }}
@@ -56,9 +56,23 @@
             <input type="submit" Submit>
         </form>
     <script>
-        var id = {{images[-1][0]}}
+        var id = {{ images[-1][0] }}
+
+        function submit() {
+            let desc = document.getElementById('desc');
+            var formData = new FormData();
+
+            formData.append("desc", desc);
+            var request = new XMLHttpRequest();
+            // request.open("POST", {{ url_for('') }})
+            request.send(desc);
+        }
+        /*
+        https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
+        */
 
         function loadFile() {
+            var images = Array(255);
             var i;
             for (i = 0; i < event.target.files.length; i++) {
               var paragraph = document.getElementById('media');
