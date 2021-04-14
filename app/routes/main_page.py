@@ -1,4 +1,4 @@
-from flask import render_template, Blueprint, redirect, flash
+from flask import render_template, Blueprint, redirect, flash, request
 from flask_login import current_user, login_user
 import datetime
 import base64
@@ -38,6 +38,7 @@ def create_post():
         post.creator = current_user.id
         post.image = ''
         for image in form.images.data:
+            print(image)
             post.image += base64.b64encode(image.read()).decode('ascii') + ' '
         current_user.posts.append(post)
         db_sess.merge(current_user)
@@ -63,11 +64,28 @@ def edit_post(post_id):
     form = PostForm()
     post = db_sess.query(Post).filter(
         Post.id == post_id).first()
+    try:
+        link = request.form.get('images').replace('data:image/png;base64,', '')
+        link = ' '.join(list(map(lambda x: x[0: 100], link.split())))
+        # link = ' '.join(link.split()[1::2])
+        # print(link[:100])
+        print(len(link.split()), link.split())
+        post.images = link
+        post.description = request.form.get('desc')
+        current_user.posts.append(post)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        print('yeah')
+        return redirect('/')
+    except Exception:
+        pass
     if form.validate_on_submit():
+        print('ha')
         post.title = form.title.data
         post.description = form.description.data
         post.tags = form.tags.data
         for image in form.images.data:
+            print(image)
             post.image += base64.b64encode(image.read()).decode('ascii') + ' '
         current_user.posts.append(post)
         db_sess.merge(current_user)

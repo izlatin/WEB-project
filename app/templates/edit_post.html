@@ -7,7 +7,7 @@
     {% block content %}
 
         <h1>Редактирование объявления</h1>
-        <form action="" method="POST" enctype="multipart/form-data">
+        <form action="active" method="POST" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             <p>
                 {{ form.title.label }}<br>
@@ -38,14 +38,15 @@
             </p>
             <p>
                 <p style="clear: both">Select Photo (one or multiple):</p>
-                {{ form.images.label }}
-                {{ form.images(class="form-control", onchange="loadFile()") }}
+                <!-- {{ form.images.label }}
+                {{ form.images(class="form-control", onchange="loadFile()", id="images_load") }} -->
+                <input type="file" name="fileinput" onchange="loadFile()" multiple/>
                 <div id="media" style="padding: 10px">
                     {% for image in images %}
                         <img id={{image[0]}} src="data:image/png;base64,{{ image[1] }}"
                              height="150" style="padding: 10px 10px">
                         <button id='delete_{{image[0]}}' type='button'
-                                onclick="return deleteFile({{ image[0] }})"
+                                onclick="deleteFile({{ image[0] }})"
                                 style="width: 30px, font-size: 10">remove</button>
                     {% endfor %}</div>
 
@@ -53,56 +54,73 @@
             <p>
                 <td colspan="2" align="center">Note: Supported image format: .jpeg, .jpg, .png, .gif</td>
             </p>
-            <input type="submit" Submit>
+<!--            <input type="submit" onclick="submit()" Submit>-->
         </form>
+    <input type="submit" onclick="submit()" Submit>
+
     <script>
-        var id = {{ images[-1][0] }}
-
+        var id = {{ images[-1][0] }};
+        var imgs = '';
         function submit() {
-            let desc = document.getElementById('desc');
-            var formData = new FormData();
+            document.getElementById('images_load').data = imgs;
+            let desc = document.getElementById('desc').value;
+            var form = new FormData();
 
-            formData.append("desc", desc);
+            form.append("desc", desc);
+            for (let i=1; i <= id; i++){
+                imgs = imgs + document.getElementById(i).src + ' ';
+            }
+            form.append("images", imgs);
             var request = new XMLHttpRequest();
-            // request.open("POST", {{ url_for('') }})
-            request.send(desc);
+            request.open("POST", '{{ post.id }}');
+            request.send(form);
         }
         /*
         https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
         */
 
         function loadFile() {
-            var images = Array(255);
-            var i;
-            for (i = 0; i < event.target.files.length; i++) {
-              var paragraph = document.getElementById('media');
-              var output = document.createElement('img');
-              output.src = URL.createObjectURL(event.target.files[i]);
-              output.height = "150";
-              id = id + 1;
-              output.id = id;
-              output.style = "padding: 10px 10px";
-              output.onload = function() {
-                URL.revokeObjectURL(output.src)
-              };
-              paragraph.appendChild(output);
-              var delete_button = document.createElement('button');
-              delete_button.type = 'button';
-              delete_button.data = "remove";
-              delete_button.style = "width: 30px, font-size: 10";
-              delete_button.id = 'delete_' + String(id);
-              delete_button.onclick = 'return deleteFile(id)';
-              paragraph.appendChild(delete_button);
+            var i = 0;
+            var paragraph = document.getElementById('media');
+            for (i = 0; i < event.target.files.length; i++){
+                var output = document.createElement('img');
+                var reader  = new FileReader();
+                
+                output.height = "150";
+                id = id + 1;
+                output.id = id;
+                output.style = "padding: 10px 10px";
+                // paragraph.appendChild(output);
+                
+                // output.src = reader.result;
+                // output.onload = function() {
+                //     URL.revokeObjectURL(output.src)
+                // };
+                // reader.onloadend = function () {
+                //     output.src = reader.result;
+                // }
+                reader.onloadend = (function (output) {
+                    return function(){
+                        output.src = reader.result;
+                    };
+                })(output);
+                reader.readAsDataURL(event.target.files[i]);
+                paragraph.appendChild(output);
+                var delete_button = document.createElement('button');
+                delete_button.type = 'button';
+                delete_button.style = "width: 30px, font-size: 10";
+                delete_button.id = 'delete_' + String(id);
+                delete_button.setAttribute('onclick', "deleteFile(" + String(id) + ")");
+                paragraph.appendChild(delete_button);
 
-              document.getElementById('delete_' + String(id)).innerHTML = 'remove';
+                document.getElementById('delete_' + String(id)).innerHTML = 'remove';
             };
-            };
-        function deleteFile(id) {
-            var image = document.getElementById(String(id));
+        };
+        function deleteFile(image_id) {
+            var image = document.getElementById(image_id);
             image.parentNode.removeChild(image);
-            var del_im = document.getElementById('delete_' + String(id))
+            var del_im = document.getElementById('delete_' + String(image_id))
             del_im.parentNode.removeChild(del_im);
-            return false;
         };
     </script>
     {% endblock %}

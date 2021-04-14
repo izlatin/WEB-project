@@ -7,7 +7,6 @@ from wtforms.validators import DataRequired
 class PostForm(FlaskForm):
     title = StringField('Заголовок')
     description = TextAreaField('Описание товара', validators=[DataRequired()])
-    deleted = ''
     tags = StringField('Теги')
     images = MultipleFileField('Upload images')
     submit = SubmitField('Добавить')
