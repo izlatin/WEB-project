@@ -25,14 +25,46 @@
         </div>
     </div>
     {% for comment in comments %}
-    <div class="well">
+    <!-- <div class="well">
         <div class="media">
             <div class="media-body">
                 <h4><i> by {{ authors[comment.author]}}</i> at {{ comment.pub_date }}</h4>
                 <p class="text">{{ comment.text }}</p>
             </div>
         </div>
-    </div>
+    </div> -->
+    <div class="panel-body">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-xs-10 col-md-11">
+                        <div>
+                            <div class="mic-info">
+                                By: <b><i>{{ authors[comment.author]}}</i></b>
+                            </div>
+                            <div class="mic-info" style="font-size: 13px, font-style: italic">
+                                On {{ comment.pub_date }}
+                            </div>
+                        </div><br>
+                        <div class="comment-text", style="font-size: 18px">
+                            {{ comment.text }}
+                        </div>
+                        <!-- <div class="action">
+                            <button type="button" class="btn btn-primary btn-xs" title="Edit">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                            <button type="button" class="btn btn-success btn-xs" title="Approved">
+                                <span class="glyphicon glyphicon-ok"></span>
+                            </button>
+                            <button type="button" class="btn btn-danger btn-xs" title="Delete">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </div> -->
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>        
     {% endfor %}
     {% if current_user.is_authenticated %}
         <h4>Leave a comment</h4>
