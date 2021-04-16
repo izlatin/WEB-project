@@ -36,41 +36,41 @@
                     </p>
                 {% endfor %}
             </p>
-            <p>
-                <p style="clear: both">Select Photo (one or multiple):</p>
-                <!-- {{ form.images.label }}
-                {{ form.images(class="form-control", onchange="loadFile()", id="images_load") }} -->
-                <input type="file" name="fileinput" onchange="loadFile()" multiple/>
-                <div id="media" style="padding: 10px">
-                    {% for image in images %}
-                        <img id={{image[0]}} src="data:image/png;base64,{{ image[1] }}"
-                             height="150" style="padding: 10px 10px">
-                        <button id='delete_{{image[0]}}' type='button'
-                                onclick="deleteFile({{ image[0] }})"
-                                style="width: 30px, font-size: 10">remove</button>
-                    {% endfor %}</div>
-
-            </p>
-            <p>
-                <td colspan="2" align="center">Note: Supported image format: .jpeg, .jpg, .png, .gif</td>
-            </p>
 <!--            <input type="submit" onclick="submit()" Submit>-->
         </form>
+        <p>
+            <p style="clear: both">Select Photo (one or multiple):</p>
+            <!-- {{ form.images.label }}
+            {{ form.images(class="form-control", onchange="loadFile()", id="images_load") }} -->
+            <input id="fileinput" type="file" name="fileinput" onchange="loadFile()" multiple/>
+            <div id="media" style="padding: 10px">
+                {% for image in images %}
+                    <img id={{image[0]}} src="{{ image[1] }}"
+                         height="150" style="padding: 10px 10px">
+                    <button id='delete_{{image[0]}}' type='button'
+                            onclick="deleteFile({{ image[0] }})"
+                            style="width: 30px, font-size: 10">remove</button>
+                {% endfor %}</div>
+        </p>
+        <p>
+            <td colspan="2" align="center">Note: Supported image format: .jpeg, .jpg, .png, .gif</td>
+        </p>
     <input type="submit" onclick="submit()" Submit>
 
     <script>
         var id = {{ images[-1][0] }};
-        var imgs = '';
-        function submit() {
-            document.getElementById('images_load').data = imgs;
+        var imgs = new Array();
+        images_str = '{{ post.image }}' + ' ';
+            function submit() {
             let desc = document.getElementById('desc').value;
             var form = new FormData();
 
+            imgs.forEach((img) => {
+                images_str += img + ' ';
+            });  
+
             form.append("desc", desc);
-            for (let i=1; i <= id; i++){
-                imgs = imgs + document.getElementById(i).src + ' ';
-            }
-            form.append("images", imgs);
+            form.append("images", images_str);
             var request = new XMLHttpRequest();
             request.open("POST", '{{ post.id }}');
             request.send(form);
@@ -82,38 +82,34 @@
         function loadFile() {
             var i = 0;
             var paragraph = document.getElementById('media');
-            for (i = 0; i < event.target.files.length; i++){
-                var output = document.createElement('img');
-                var reader  = new FileReader();
-                
-                output.height = "150";
-                id = id + 1;
-                output.id = id;
-                output.style = "padding: 10px 10px";
-                // paragraph.appendChild(output);
-                
-                // output.src = reader.result;
-                // output.onload = function() {
-                //     URL.revokeObjectURL(output.src)
-                // };
-                // reader.onloadend = function () {
-                //     output.src = reader.result;
-                // }
-                reader.onloadend = (function (output) {
-                    return function(){
-                        output.src = reader.result;
-                    };
-                })(output);
-                reader.readAsDataURL(event.target.files[i]);
-                paragraph.appendChild(output);
-                var delete_button = document.createElement('button');
-                delete_button.type = 'button';
-                delete_button.style = "width: 30px, font-size: 10";
-                delete_button.id = 'delete_' + String(id);
-                delete_button.setAttribute('onclick', "deleteFile(" + String(id) + ")");
-                paragraph.appendChild(delete_button);
+            var files = document.getElementById('fileinput').files;
+            for (var i = 0; i < files.length; i++) { //for multiple files
+                (function(file) {
+                    var output = document.createElement('img');
+                    var reader  = new FileReader();
 
-                document.getElementById('delete_' + String(id)).innerHTML = 'remove';
+                    output.height = "150";
+                    id = id + 1;
+                    output.id = id;
+                    output.style = "padding: 10px 10px";
+                    reader.onload = (function (output) {
+                        return function(){
+                            output.src = reader.result;
+                            imgs.push(output.src);
+    <!--                        console.log(files[i-1], i);-->
+                        };
+                    })(output);
+                    reader.readAsDataURL(files[i]);
+                    paragraph.appendChild(output);
+                    var delete_button = document.createElement('button');
+                    delete_button.type = 'button';
+                    delete_button.style = "width: 30px, font-size: 10";
+                    delete_button.id = 'delete_' + String(id);
+                    delete_button.setAttribute('onclick', "deleteFile(" + String(id) + ")");
+                    paragraph.appendChild(delete_button);
+
+                    document.getElementById('delete_' + String(id)).innerHTML = 'remove';
+                })(files[i]);
             };
         };
         function deleteFile(image_id) {

@@ -65,18 +65,16 @@ def edit_post(post_id):
     post = db_sess.query(Post).filter(
         Post.id == post_id).first()
     try:
-        link = request.form.get('images').replace('data:image/png;base64,', '')
-        link = ' '.join(list(map(lambda x: x[0: 100], link.split())))
-        # link = ' '.join(link.split()[1::2])
-        # print(link[:100])
-        print(len(link.split()), link.split())
-        post.images = link
-        post.description = request.form.get('desc')
-        current_user.posts.append(post)
-        db_sess.merge(current_user)
-        db_sess.commit()
-        print('yeah')
-        return redirect('/')
+        link = request.form.get('images')
+        print(len(link.split()))
+        if link:
+            post.image = link
+            post.description = request.form.get('desc')
+            current_user.posts.append(post)
+            db_sess.merge(current_user)
+            db_sess.commit()
+            print('yeah')
+            return redirect('/')
     except Exception:
         pass
     if form.validate_on_submit():
