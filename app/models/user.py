@@ -12,7 +12,7 @@ from app.db_session import SqlAlchemyBase
 
 
 class User(SqlAlchemyBase, UserMixin):
-    __tablename__ = 'User'
+    __tablename__ = 'users'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
@@ -42,8 +42,3 @@ class User(SqlAlchemyBase, UserMixin):
 
     def get_user_id(self):
         return self.get_id()
-# class LoginForm(FlaskForm):
-#     email = EmailField('Почта', validators=[DataRequired()])
-#     password = PasswordField('Пароль', validators=[DataRequired()])
-#     remember_me = BooleanField('Запомнить меня')
-#     submit = SubmitField('Войти')

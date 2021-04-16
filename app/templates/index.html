@@ -7,7 +7,7 @@
               {% if post.creator == current_user.id %}
                 <a href="/edit_post/{{post.id}}"><button class="pull-right btn btn-primary">Edit</button></a>
               {% endif %}
-              <h4 class="media-heading">{{ post.title }}</h4>
+              <a href="/post/{{post.id}}"><h4 class="media-heading">{{ post.title }}</h4></a>
                 <p class="text-left">{{ post.user.name }} {{ post.user.surname }}</p>
                 <p class="text">{{ post.description }}</p>
                 {% for image in images%}

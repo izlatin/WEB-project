@@ -1,10 +1,7 @@
 import datetime
 import sqlalchemy
-from flask_login import current_user
-from flask_wtf import FlaskForm
 from sqlalchemy import orm
-from wtforms import StringField, BooleanField, SubmitField, IntegerField, TextAreaField
-from wtforms.validators import DataRequired
+
 
 from app import db_session
 
@@ -16,7 +13,7 @@ class Post(db_session.SqlAlchemyBase):
                            primary_key=True, autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     image = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
-    creator = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('User.id'))
+    creator = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
     description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     tags = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     start_date = sqlalchemy.Column(sqlalchemy.DateTime,
@@ -24,16 +21,8 @@ class Post(db_session.SqlAlchemyBase):
     end_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                  default=datetime.datetime.now)
     user = orm.relation('User')
+    comments = orm.relation('Comment', back_populates='post')
 
     def __repr__(self):
         return f'<Post> {self.title}'
 
-#
-#
-# class JobsEditForm(FlaskForm):
-#     job = StringField('Работа', validators=[DataRequired()])
-#     team_leader = IntegerField('id тимлидера')
-#     work_size = IntegerField('Длительность работы')
-#     collaborators = StringField('Сотрудники')
-#     is_finished = BooleanField("Завершено")
-#     submit = SubmitField('Сохранить')

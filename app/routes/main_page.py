@@ -8,8 +8,8 @@ from flask_login.utils import login_required
 from sqlalchemy import desc
 
 from app import db_sess
-from app.models import Post, User
-from app.forms import PostForm, EditProfileForm, ChangePasswordForm
+from app.models import Post, User, Comment
+from app.forms import PostForm, CommentForm
 
 bp = Blueprint('main', __name__)
 
@@ -96,3 +96,25 @@ def edit_post(post_id):
     form.description.data = post.description
     form.tags.data = post.tags
     return render_template('edit_post.html', form=form, post=post, images=images)
+
+
+@bp.route('/post/<int:post_id>', methods=['GET', 'POST'])
+def post(post_id):
+    cur_post = db_sess.query(Post).filter(Post.id == post_id).first()
+    images = cur_post.image.split()
+    comment_form = CommentForm()
+    post_comments = db_sess.query(Comment).filter(Comment.post_id == cur_post.id).order_by(Comment.pub_date)
+    authors = db_sess.query(User).all()
+    authors_ids = {}
+    for author in authors:
+        authors_ids[author.id] = f'{author.name} {author.surname}'
+    if comment_form.validate_on_submit():
+        comment = Comment()
+        comment.author = current_user.id
+        comment.text = comment_form.text.data
+        cur_post.comments.append(comment)
+        db_sess.merge(cur_post)
+        db_sess.commit()
+        return redirect(f'/post/{post_id}')
+    return render_template('post.html', post=cur_post, images=images,
+                           comment_form=comment_form, comments=post_comments, authors=authors_ids)

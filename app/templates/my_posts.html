@@ -6,7 +6,7 @@
         <div class="media">
             <div class="media-body">
               <a href="/edit_post/{{post.id}}"><button class="pull-right btn btn-primary">Edit</button></a>
-              <h4 class="media-heading">{{ post.title }}</h4>
+              <a href="/post/{{post.id}}"><h4 class="media-heading">{{ post.title }}</h4></a>
                 <p class="text-left">{{ post.user.name }} {{ post.user.surname }}</p>
                 {% for image in images%}
                     <a class="pull-left" href="#">

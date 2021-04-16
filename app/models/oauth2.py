@@ -20,7 +20,7 @@ class OAuth2Client(SqlAlchemyBase, OAuth2ClientMixin):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(
-        Integer, ForeignKey('User.id', ondelete='CASCADE'))
+        Integer, ForeignKey('users.id', ondelete='CASCADE'))
     user = relation('User')
 
 
@@ -29,7 +29,7 @@ class OAuth2AuthorizationCode(SqlAlchemyBase, OAuth2AuthorizationCodeMixin):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(
-        Integer, ForeignKey('User.id', ondelete='CASCADE'))
+        Integer, ForeignKey('users.id', ondelete='CASCADE'))
     user = relation('User')
 
 
@@ -38,7 +38,7 @@ class OAuth2Token(SqlAlchemyBase, OAuth2TokenMixin):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(
-        Integer, ForeignKey('User.id', ondelete='CASCADE'))
+        Integer, ForeignKey('users.id', ondelete='CASCADE'))
     user = relation('User')
 
     def is_refresh_token_active(self):
