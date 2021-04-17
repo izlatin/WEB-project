@@ -11,7 +11,7 @@ from sqlalchemy import desc
 
 from app import db_sess
 from app.models import Post, User, Comment
-from app.forms import PostForm, CommentForm
+from app.forms import PostForm, CommentForm, EditCommentForm
 
 bp = Blueprint('main', __name__)
 
@@ -112,3 +112,36 @@ def post_after_edited():
 def post_after_created():
     time.sleep(0.2)
     return redirect('/index')
+
+
+@bp.route('/delete_post/<int:post_id>')
+def delete_post(post_id):
+    db_sess.query(Comment).filter(Comment.post_id == post_id).delete()
+    db_sess.query(Post).filter(Post.id == post_id).delete()
+    db_sess.commit()
+    return redirect('/index')
+
+
+@bp.route('/delete_comment/<int:comment_id>')
+def delete_comment(comment_id):
+    post_id = db_sess.query(Comment).filter(Comment.id == comment_id).first().post_id
+    db_sess.query(Comment).filter(Comment.id == comment_id).delete()
+    db_sess.commit()
+    return redirect(f'/post/{post_id}')
+
+
+@bp.route('/edit_comment/<int:comment_id>', methods=["GET", "POST"])
+def edit_comment(comment_id):
+    form = EditCommentForm()
+    comment = db_sess.query(Comment).filter(Comment.id == comment_id).first()
+    # form.text.data = comment.text
+    if form.validate_on_submit():
+        cur_post = db_sess.query(Post).filter(Post.id == comment.post_id).first()
+        post_id = cur_post.id
+        comment.text = form.text.data
+        print(comment.text)
+        cur_post.comments.append(comment)
+        db_sess.merge(cur_post)
+        db_sess.commit()
+        return redirect(f'/post/{post_id}')
+    return render_template('edit_comment.html', form=form, comment=comment)

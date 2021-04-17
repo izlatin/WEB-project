@@ -1,7 +1,5 @@
 <head>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 </head>
 {% extends "base.html" %}
 {% block content %}
@@ -9,12 +7,14 @@
     <div class="well">
         <div class="media">
             <div class="media-body">
-              <a href="/edit_post/{{post.id}}"><button class="pull-right btn btn-primary">Edit</button></a>
+              {% if current_user.id == post.creator%}
+                <a href="/edit_post/{{post.id}}"><button class="pull-right btn btn-primary" onclick="editComment()">Edit</button></a>
+              {% endif %}
               <h4 class="media-heading">{{ post.title }}</h4>
                 <p class="text-left">{{ post.user.name }} {{ post.user.surname }}</p>
                 {% for image in images%}
                     <a class="pull-left" href="#">
-                        <img src="data:image/png;base64,{{ image }}" width="100" style="padding-right: 10px">
+                        <img src="{{ image }}" width="100" style="padding-right: 10px">
                     </a>
                 {% endfor %}
             </div>
@@ -25,14 +25,6 @@
         </div>
     </div>
     {% for comment in comments %}
-    <!-- <div class="well">
-        <div class="media">
-            <div class="media-body">
-                <h4><i> by {{ authors[comment.author]}}</i> at {{ comment.pub_date }}</h4>
-                <p class="text">{{ comment.text }}</p>
-            </div>
-        </div>
-    </div> -->
     <div class="panel-body">
         <ul class="list-group">
             <li class="list-group-item">
@@ -46,20 +38,25 @@
                                 On {{ comment.pub_date }}
                             </div>
                         </div><br>
-                        <div class="comment-text", style="font-size: 18px">
+                        <div class="comment-text" style="font-size: 18px">
                             {{ comment.text }}
                         </div>
-                        <!-- <div class="action">
-                            <button type="button" class="btn btn-primary btn-xs" title="Edit">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                            </button>
-                            <button type="button" class="btn btn-success btn-xs" title="Approved">
-                                <span class="glyphicon glyphicon-ok"></span>
-                            </button>
-                            <button type="button" class="btn btn-danger btn-xs" title="Delete">
-                                <span class="glyphicon glyphicon-trash"></span>
-                            </button>
-                        </div> -->
+                        {% if current_user.id == comment.author %}
+                        <div class="action">
+                            <a href="/edit_comment/{{comment.id}}">
+                                <button type="button" class="btn btn-primary btn-xs"
+                                        style="font-size: 20px" title="Edit">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </button>
+                            </a>
+                            <a href="/delete_comment/{{comment.id}}">
+                                <button type="button" class="btn btn-danger btn-xs" style="font-size: 20px"
+                                        title="Delete">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </a>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </li>

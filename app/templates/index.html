@@ -5,6 +5,7 @@
         <div class="media">
             <div class="media-body">
               {% if post.creator == current_user.id %}
+                <a href="/delete_post/{{post.id}}"><button class="pull-right btn btn-danger">Delete</button></a>
                 <a href="/edit_post/{{post.id}}"><button class="pull-right btn btn-primary">Edit</button></a>
               {% endif %}
               <a href="/post/{{post.id}}"><h4 class="media-heading">{{ post.title }}</h4></a>
