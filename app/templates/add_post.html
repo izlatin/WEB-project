@@ -106,6 +106,7 @@
             };
         };
         function deleteFile(image_id) {
+            imgs[image_id - 1] = '';
             var image = document.getElementById(image_id);
             image.parentNode.removeChild(image);
             var del_im = document.getElementById('delete_' + String(image_id))
