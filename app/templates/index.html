@@ -10,6 +10,7 @@
               <a href="/post/{{post.id}}"><h4 class="media-heading">{{ post.title }}</h4></a>
                 <p class="text-left">{{ post.user.name }} {{ post.user.surname }}</p>
                 <p class="text">{{ post.description }}</p>
+                <p class="text"> Tags: {{ post.tags }}</p>
                 {% for image in images%}
                     <a class="pull-left" href="#">
                         <img src="{{ image }}" width="100" style="padding-right: 10px">

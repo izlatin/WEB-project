@@ -7,11 +7,11 @@
     {% block content %}
 
         <h1>Редактирование объявления</h1>
-        <form action="active" method="POST" enctype="multipart/form-data">
+        <form action="/edit_post/{{post.id}}" method="POST" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             <p>
                 {{ form.title.label }}<br>
-                {{ form.title(class="form-control") }}<br>
+                {{ form.title(class="form-control", id="title") }}<br>
                 {% for error in form.title.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}
@@ -20,7 +20,7 @@
             </p>
             <p>
                 {{ form.description.label }}<br>
-                {{ form.description(class="form-control", id="desc") }}<br>
+                {{ form.description(class="form-control", id="description") }}<br>
                 {% for error in form.description.errors %}
                     <p content="alert alert-danger" role="alert">
                         {{ error }}
@@ -29,7 +29,7 @@
             </p>
             <p>
                 {{ form.tags.label }}<br>
-                {{ form.tags(class="form-control", onchange="loadFile()") }}<br>
+                {{ form.tags(class="form-control", id="tags") }}<br>
                 {% for error in form.tags.errors %}
                     <p content="alert alert-danger" role="alert">
                         {{ error }}
@@ -62,18 +62,23 @@
         var imgs = new Array();
         images_str = '{{ post.image }}' + ' ';
             function submit() {
-            let desc = document.getElementById('desc').value;
+            let title = document.getElementById('title').value;
+            let desc = document.getElementById('description').value;
+            let tags = document.getElementById('tags').value;
             var form = new FormData();
 
             imgs.forEach((img) => {
                 images_str += img + ' ';
             });  
 
-            form.append("desc", desc);
+            form.append("description", desc);
+            form.append("title", title);
+            form.append("tags", tags);
             form.append("images", images_str);
             var request = new XMLHttpRequest();
             request.open("POST", '{{ post.id }}');
             request.send(form);
+            window.location = "/index";
         }
         /*
         https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects

@@ -1,4 +1,4 @@
-from flask import render_template, Blueprint, redirect, flash, request
+from flask import render_template, Blueprint, redirect, flash, request, url_for
 from flask_login import current_user, login_user
 import datetime
 import base64
@@ -29,20 +29,17 @@ def index():
 @login_required
 def create_post():
     form = PostForm()
-    if form.validate_on_submit():
-        # db_sess = db_session.create_session()
+    if request.method == "POST":
         post = Post()
-        post.title = form.title.data
-        post.description = form.description.data
-        post.tags = form.tags.data
+        post.title = request.form.get("title")
+        post.description = request.form.get("description")
+        post.tags = request.form.get("tags")
         post.creator = current_user.id
-        post.image = ''
-        for image in form.images.data:
-            print(image)
-            post.image += base64.b64encode(image.read()).decode('ascii') + ' '
+        post.image = request.form.get("images")
         current_user.posts.append(post)
         db_sess.merge(current_user)
         db_sess.commit()
+        # TODO solve redirecting with update index
         return redirect('/')
     return render_template('add_post.html', title='Создание объявления',
                            form=form)
@@ -64,27 +61,13 @@ def edit_post(post_id):
     form = PostForm()
     post = db_sess.query(Post).filter(
         Post.id == post_id).first()
-    try:
-        link = request.form.get('images')
-        print(len(link.split()))
-        if link:
-            post.image = link
-            post.description = request.form.get('desc')
-            current_user.posts.append(post)
-            db_sess.merge(current_user)
-            db_sess.commit()
-            print('yeah')
-            return redirect('/')
-    except Exception:
-        pass
-    if form.validate_on_submit():
-        print('ha')
-        post.title = form.title.data
-        post.description = form.description.data
-        post.tags = form.tags.data
-        for image in form.images.data:
-            print(image)
-            post.image += base64.b64encode(image.read()).decode('ascii') + ' '
+    if request.method == "POST":
+        post.title = request.form.get("title")
+        post.description = request.form.get("description")
+        post.tags = request.form.get("tags")
+        post.creator = current_user.id
+        # TODO for mls_dmitry - solve images saving
+        post.image = request.form.get("images")
         current_user.posts.append(post)
         db_sess.merge(current_user)
         db_sess.commit()

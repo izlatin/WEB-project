@@ -6,11 +6,11 @@
     {% extends "base.html" %}
     {% block content %}
         <h1>Создание объявления</h1>
-        <form action="" method="POST" enctype="multipart/form-data">
+        <form action="/add_post" method="POST" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             <p>
                 {{ form.title.label }}<br>
-                {{ form.title(class="form-control") }}<br>
+                {{ form.title(class="form-control", id="title") }}<br>
                 {% for error in form.title.errors %}
                     <p class="alert alert-danger" role="alert">
                         {{ error }}
@@ -19,7 +19,7 @@
             </p>
             <p>
                 {{ form.description.label }}<br>
-                {{ form.description(class="form-control") }}<br>
+                {{ form.description(class="form-control", id="description" )}}<br>
                 {% for error in form.description.errors %}
                     <p content="alert alert-danger" role="alert">
                         {{ error }}
@@ -28,42 +28,88 @@
             </p>
             <p>
                 {{ form.tags.label }}<br>
-                {{ form.tags(class="form-control", onchange="loadFile") }}<br>
+                {{ form.tags(class="form-control", onchange="loadFile", id="tags") }}<br>
                 {% for error in form.tags.errors %}
                     <p content="alert alert-danger" role="alert">
                         {{ error }}
                     </p>
                 {% endfor %}
             </p>
-            <p>
-                <td>Select Photo (one or multiple):</td>
-                {{ form.images.label }}
-                {{ form.images(class="form-control", onchange="loadFile()") }}
-                <div id="media">
 
-                </div>
-<!--                <img id="output" height="100px"/>-->
-                <!-- <td><input type="file" name="files[]" multiple/></td> -->
-            </p>
-            <p>
-                <td colspan="2" align="center">Note: Supported image format: .jpeg, .jpg, .png, .gif</td>
-            </p>
-            <input type="submit" Submit>
         </form>
+        <p>
+            <td>Select Photo (one or multiple):</td>
+            <input id="fileinput" type="file" name="fileinput" onchange="loadFile()" multiple/>
+            <div id="media">
+
+            </div>
+        </p>
+        <p>
+            <td colspan="2" align="center">Note: Supported image format: .jpeg, .jpg, .png, .gif</td>
+        </p>
+    <input type="submit" onclick="submit()" Submit>
     <script>
+        var id = 0;
+        var imgs = new Array();
+        images_str = '';
+            function submit() {
+            let title = document.getElementById('title').value;
+            let desc = document.getElementById('description').value;
+            let tags = document.getElementById('tags').value;
+            var form = new FormData();
+
+            imgs.forEach((img) => {
+                images_str += img + ' ';
+            });
+
+            form.append("description", desc);
+            form.append("title", title);
+            form.append("tags", tags);
+            form.append("images", images_str);
+            var request = new XMLHttpRequest();
+            request.open("POST", "create_post");
+            request.send(form);
+            document.location.replace("/index");
+        }
+
         function loadFile() {
-            var i;
-            for (i = 0; i < event.target.files.length; i++) {
-              var paragraph = document.getElementById('media');
-              var output = document.createElement('img');
-              output.src = URL.createObjectURL(event.target.files[i]);
-              output.height = "100";
-              output.style = "padding-right: 10px";
-              output.onload = function() {
-                URL.revokeObjectURL(output.src)
-              };
-              paragraph.appendChild(output);
+            var i = 0;
+            var paragraph = document.getElementById('media');
+            var files = document.getElementById('fileinput').files;
+            for (var i = 0; i < files.length; i++) { //for multiple files
+                (function(file) {
+                    var output = document.createElement('img');
+                    var reader  = new FileReader();
+
+                    output.height = "150";
+                    id = id + 1;
+                    output.id = id;
+                    output.style = "padding: 10px 10px";
+                    reader.onload = (function (output) {
+                        return function(){
+                            output.src = reader.result;
+                            imgs.push(output.src);
+    <!--                        console.log(files[i-1], i);-->
+                        };
+                    })(output);
+                    reader.readAsDataURL(files[i]);
+                    paragraph.appendChild(output);
+                    var delete_button = document.createElement('button');
+                    delete_button.type = 'button';
+                    delete_button.style = "width: 30px, font-size: 10";
+                    delete_button.id = 'delete_' + String(id);
+                    delete_button.setAttribute('onclick', "deleteFile(" + String(id) + ")");
+                    paragraph.appendChild(delete_button);
+
+                    document.getElementById('delete_' + String(id)).innerHTML = 'remove';
+                })(files[i]);
             };
+        };
+        function deleteFile(image_id) {
+            var image = document.getElementById(image_id);
+            image.parentNode.removeChild(image);
+            var del_im = document.getElementById('delete_' + String(image_id))
+            del_im.parentNode.removeChild(del_im);
         };
 
     </script>
