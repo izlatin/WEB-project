@@ -1,3 +1,5 @@
+import time
+
 from flask import render_template, Blueprint, redirect, flash, request, url_for
 from flask_login import current_user, login_user
 import datetime
@@ -99,3 +101,14 @@ def post(post_id):
         return redirect(f'/post/{post_id}')
     return render_template('post.html', post=cur_post, images=images,
                            comment_form=comment_form, comments=post_comments, authors=authors_ids)
+
+
+@bp.route('/post_after_edited')
+def post_after_edited():
+    return redirect('/index')
+
+
+@bp.route('/post_after_created')
+def post_after_created():
+    time.sleep(0.2)
+    return redirect('/index')

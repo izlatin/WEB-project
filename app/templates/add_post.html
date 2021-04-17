@@ -69,7 +69,7 @@
             var request = new XMLHttpRequest();
             request.open("POST", "create_post");
             request.send(form);
-            document.location.replace("/index");
+            window.location = "/post_after_created";
         }
 
         function loadFile() {
