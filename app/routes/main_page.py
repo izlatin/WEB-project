@@ -188,9 +188,16 @@ def post_after_proposed():
 def post_replies(post_id):
     cur_post = db_sess.query(Post).filter(Post.id == post_id).first()
 
-    replies_num = db_sess.query(Pair).filter(Pair.original == post_id).count()
-    # replies_ids = [item.reply for item in replies]
-    # replies = db_sess.query(Post).filter(Post.id in replies_ids)
-
-    images = cur_post.image.split()
-    return render_template('post_replies.html', post=cur_post, images=images, replies_num=replies_num)
+    replies = db_sess.query(Pair).filter(Pair.original == post_id)
+    replies_ids = [item.reply for item in replies]
+    posts = []
+    for id in replies_ids:
+        q = db_sess.query(Post).filter(Post.id == id).order_by(desc(Post.start_date)).all()
+        for p in q:
+            posts.append(p)
+    posts.sort(key=lambda x: x.start_date, reverse=True)
+    images = list(map(lambda x: x.image.split(), posts))
+    data = []
+    for i in range(len(images)):
+        data.append([posts[i], images[i]])
+    return render_template('post_replies.html', replies=data)
