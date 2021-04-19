@@ -10,7 +10,7 @@ from flask_login.utils import login_required
 from sqlalchemy import desc
 
 from app import db_sess
-from app.models import Post, User, Comment
+from app.models import Post, User, Comment, Pair
 from app.forms import PostForm, CommentForm, EditCommentForm
 
 bp = Blueprint('main', __name__)
@@ -41,7 +41,6 @@ def create_post():
         current_user.posts.append(post)
         db_sess.merge(current_user)
         db_sess.commit()
-        # TODO solve redirecting with update index
         return redirect('/')
     return render_template('add_post.html', title='Создание объявления',
                            form=form)
@@ -118,6 +117,7 @@ def post_after_created():
 def delete_post(post_id):
     db_sess.query(Comment).filter(Comment.post_id == post_id).delete()
     db_sess.query(Post).filter(Post.id == post_id).delete()
+    db_sess.query(Pair).filter((Pair.original == post_id) | (Pair.reply == post_id)).delete()
     db_sess.commit()
     return redirect('/index')
 
@@ -145,3 +145,35 @@ def edit_comment(comment_id):
         db_sess.commit()
         return redirect(f'/post/{post_id}')
     return render_template('edit_comment.html', form=form, comment=comment)
+
+
+@bp.route('/propose_barter/<int:post_id>', methods=['GET', 'POST'])
+def propose_barter(post_id):
+    form = PostForm()
+    reply_to = db_sess.query(Post).filter(Post.id == post_id).first()
+    images = reply_to.image.split()
+    pair = Pair()
+    if request.method == "POST":
+        post = Post()
+        post.title = request.form.get("title")
+        post.description = request.form.get("description")
+        post.tags = request.form.get("tags")
+        post.creator = current_user.id
+        post.image = request.form.get("images")
+        current_user.posts.append(post)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        db_sess.flush()
+        pair.original = reply_to.id
+        pair.reply = post.id
+        db_sess.merge(pair)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('propose_barter.html', title='Предложить обмен', form=form,
+                           images=images, reply_to=reply_to)
+
+
+@bp.route('/post_after_proposed')
+def post_after_proposed():
+    time.sleep(0.2)
+    return redirect('/index')

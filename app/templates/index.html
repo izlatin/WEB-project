@@ -22,6 +22,9 @@
             <ul class="list-inline list-unstyled">
                 <li><span><i class="glyphicon glyphicon-calendar"></i>{{ post.start_date }}</span></li>
             </ul>
+            {% if current_user.is_authenticated and current_user.id != post.creator %}
+                <a href="/propose_barter/{{post.id}}"><button class="pull-right btn btn-success">Reply</button></a>
+            {% endif %}
         </div>
     </div>
     {% endfor %}
