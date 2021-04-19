@@ -83,6 +83,11 @@ def edit_post(post_id):
 @bp.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def post(post_id):
     cur_post = db_sess.query(Post).filter(Post.id == post_id).first()
+
+    replies_num = db_sess.query(Pair).filter(Pair.original == post_id).count()
+    # replies_ids = [item.reply for item in replies]
+    # replies = db_sess.query(Post).filter(Post.id in replies_ids)
+
     images = cur_post.image.split()
     comment_form = CommentForm()
     post_comments = db_sess.query(Comment).filter(Comment.post_id == cur_post.id).order_by(Comment.pub_date)
@@ -98,7 +103,7 @@ def post(post_id):
         db_sess.merge(cur_post)
         db_sess.commit()
         return redirect(f'/post/{post_id}')
-    return render_template('post.html', post=cur_post, images=images,
+    return render_template('post.html', post=cur_post, images=images, replies_num=replies_num,
                            comment_form=comment_form, comments=post_comments, authors=authors_ids)
 
 
@@ -177,3 +182,15 @@ def propose_barter(post_id):
 def post_after_proposed():
     time.sleep(0.2)
     return redirect('/index')
+
+
+@bp.route('/post/<int:post_id>/replies')
+def post_replies(post_id):
+    cur_post = db_sess.query(Post).filter(Post.id == post_id).first()
+
+    replies_num = db_sess.query(Pair).filter(Pair.original == post_id).count()
+    # replies_ids = [item.reply for item in replies]
+    # replies = db_sess.query(Post).filter(Post.id in replies_ids)
+
+    images = cur_post.image.split()
+    return render_template('post_replies.html', post=cur_post, images=images, replies_num=replies_num)

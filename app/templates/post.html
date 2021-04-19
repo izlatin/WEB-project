@@ -28,6 +28,9 @@
             {% endif %}
         </div>
     </div>
+    {% if current_user.id == post.creator and replies_num > 0 %}
+        <a href="/post/{{post.id}}/replies"><button class="btn btn-primary">See replies</button></a>
+    {% endif %}
     {% for comment in comments %}
     <div class="panel-body">
         <ul class="list-group">
