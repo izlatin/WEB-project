@@ -52,42 +52,42 @@
         var id = 0;
         var imgs = new Array();
         images_str = '';
-            function submit() {
-                imgs.forEach((img) => {
-                        images_str += img + ' ';
-                    });
-                function check(arr){
-                    flag = false
-                    arr.forEach((el) => {
-                        if (Boolean(el)){
-                            flag = true;
-                        };
-                    });
-                    return flag;
-                };
+        function submit() {
+            imgs.forEach((img) => {
+                    images_str += img + ' ';
+                });
+            function check(arr){
+                flag = false
+                arr.forEach((el) => {
+                    if (Boolean(el)){
+                        flag = true;
+                    };
+                });
+                return flag;
+            };
 
-                let title = document.getElementById('title').value;
-                let desc = document.getElementById('description').value;
-                let tags = document.getElementById('tags').value;
-                if (check(imgs) && (title) && (desc) && (tags)){
-                    var form = new FormData();
+            let title = document.getElementById('title').value;
+            let desc = document.getElementById('description').value;
+            let tags = document.getElementById('tags').value;
+            if (check(imgs) && (title) && (desc) && (tags)){
+                var form = new FormData();
 
-                    form.append("description", desc);
-                    form.append("title", title);
-                    form.append("tags", tags);
-                    form.append("images", images_str);
-                    var request = new XMLHttpRequest();
-                    request.open("POST", "create_post");
-                    request.send(form);
-                    window.location = "/post_after_created";
-                  }
-                  else if (!(title) || !(desc) || !(tags)){
-                    alert("Some fields unfilled");
-                  }
-                  else{
-                    alert("No images - no post!");
-                  };
-            }
+                form.append("description", desc);
+                form.append("title", title);
+                form.append("tags", tags);
+                form.append("images", images_str);
+                var request = new XMLHttpRequest();
+                request.open("POST", "create_post");
+                request.send(form);
+                window.location = "/post_after_created";
+              }
+              else if (!(title) || !(desc) || !(tags)){
+                alert("Some fields unfilled");
+              }
+              else{
+                alert("No images - no post!");
+              };
+        }
 
         function loadFile() {
             var i = 0;

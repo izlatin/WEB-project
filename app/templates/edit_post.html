@@ -48,7 +48,7 @@
                     <img id={{image[0]}} src="{{ image[1] }}"
                          height="150" style="padding: 10px 10px">
                     <button id='delete_{{image[0]}}' type='button'
-                            onclick="deleteFile({{ image[0] }})"
+                            onclick="deleteOldFile({{ image[0] }}, '{{ image[1] }}')"
                             style="width: 30px, font-size: 10">remove</button>
                 {% endfor %}</div>
         </p>
@@ -59,30 +59,42 @@
 
     <script>
         var id = {{ images[-1][0] }};
+        var imgs = new Array();
+        var imgs_old = new Array();
+        images_str = '';
+        images_old_str = '';
         function submit() {
                 imgs.forEach((img) => {
                         images_str += img + ' ';
                     });
-
-                function check(arr){
+                imgs_old.forEach((img) => {
+                        images_old_str += img + ' ';
+                    });
+                function check(){
                     flag = false
-                    arr.forEach((el) => {
+                    imgs.forEach((el) => {
+                        if (Boolean(el)){
+                            flag = true;
+                        };
+                    });
+                    imgs_old.forEach((el) => {
                         if (Boolean(el)){
                             flag = true;
                         };
                     });
                     return flag;
-                };
+                };  
                 let title = document.getElementById('title').value;
                 let desc = document.getElementById('description').value;
                 let tags = document.getElementById('tags').value;
-                if (check(imgs) && (title) && (desc) && (tags)){
+                if (check() && (title) && (desc) && (tags)){
                     var form = new FormData();
 
                     form.append("description", desc);
                     form.append("title", title);
                     form.append("tags", tags);
                     form.append("images", images_str);
+                    form.append("images_deleted", images_old_str);
                     var request = new XMLHttpRequest();
                     request.open("POST", '{{ post.id }}');
                     request.send(form);
@@ -131,6 +143,13 @@
         };
         function deleteFile(image_id) {
             imgs[image_id - 1] = '';
+            var image = document.getElementById(image_id);
+            image.parentNode.removeChild(image);
+            var del_im = document.getElementById('delete_' + String(image_id))
+            del_im.parentNode.removeChild(del_im);
+        };
+        function deleteOldFile(image_id, url) {
+            imgs_old.push(String(url));
             var image = document.getElementById(image_id);
             image.parentNode.removeChild(image);
             var del_im = document.getElementById('delete_' + String(image_id))

@@ -1,9 +1,12 @@
 import time
+from functools import wraps
 
 from flask import render_template, Blueprint, redirect, flash, request, url_for
 from flask_login import current_user, login_user
-import datetime
+import asyncio
 import base64
+from pathlib import Path
+import os
 
 
 from flask_login.utils import login_required
@@ -20,6 +23,12 @@ from flask_cloudy import FileStorage, Object
 
 bp = Blueprint('main', __name__)
 
+def async_action(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        return asyncio.run(f(*args, **kwargs))
+    return wrapped
+
 
 @bp.route('/')
 @bp.route('/index')
@@ -32,10 +41,8 @@ def index():
         for image in images:
             image_obj = storage.get(f'image-{post.id}-{image.image_id}.png')
             if image_obj and isinstance(image_obj, Object):
-                print(image_obj.url)
                 urls.append(image_obj.url)
-        
-        
+
         data.append([post, urls])
     return render_template('index.html', posts=data)
 
@@ -95,34 +102,37 @@ def edit_post(post_id):
         post.description = request.form.get("description")
         post.tags = request.form.get("tags")
         post.creator = current_user.id
-        # TODO for mls_dmitry - solve images saving
-        # post.image = request.form.get("images")
-        
-        # image_ids = []
-        # for image in request.form.get('images').split():
-        #     print('image', image)
-        #     filename = image.split('/')[-1]
-        #     image_id = filename.split('.')[0].split('-')[2]
-        #     image_ids.append(image_id)
-            
-        # for image_db_obj in db_sess.query(Image).filter_by(post_id=post_id).all():
-        #     if image_db_obj.image_id not in image_ids:
-        #         db_sess.delete(image_db_obj)s
         
         current_user.posts.append(post)
         db_sess.merge(current_user)
+        db_sess.commit()
+        image_num = db_sess.query(Image).filter(Image.post_id == post_id).count()
+        for url in request.form.get('images_deleted').split():
+            image_id = int(url.split("/")[-1].split('.')[0].split('-')[-1])
+            db_sess.query(Image).filter(Image.post_id == post_id, Image.image_id == image_id).delete()
+            os.remove(f'images/{url.split("/")[-1]}')
+        for i, base64_image in enumerate(request.form.get('images').split()):
+            image = Image()
+            image.user_id = current_user.id
+            image.post_id = post.id
+            image.image_id = i + image_num
+
+            db_sess.add(image)
+            db_sess.commit()
+            db_sess.flush()
+
+            image_stream = BytesIO(base64.b64decode(base64_image[22:]))
+            storage.upload(FileStorage(image_stream, filename=f'image-{post.id}-{image.image_id}.png'))
+
         db_sess.commit()
         return redirect('/')
     
     images = db_sess.query(Image).filter_by(post_id=post.id).all()
     urls = []
-    print('images', images)
     for i, image in enumerate(images):
         image_file = storage.get(f'image-{post.id}-{image.image_id}.png')
-        # print('image_file', image_file)
         if image_file:
             urls.append([i, image_file.url])
-    # images = [i for i in range()]
     form.title.data = post.title
     form.description.data = post.description
     form.tags.data = post.tags
@@ -157,7 +167,9 @@ def post(post_id):
 
 
 @bp.route('/post_after_edited')
-def post_after_edited():
+@async_action
+async def post_after_edited():
+    await asyncio.sleep(2)
     return redirect('/index')
 
 
@@ -291,7 +303,6 @@ def search():
         for image in images:
             image_obj = storage.get(f'image-{post.id}-{image.image_id}.png')
             if image_obj and isinstance(image_obj, Object):
-                print(image_obj.url)
                 urls.append(image_obj.url)
         
         
