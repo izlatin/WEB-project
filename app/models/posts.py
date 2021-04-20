@@ -20,6 +20,7 @@ class Post(db_session.SqlAlchemyBase):
                                    default=datetime.datetime.now)
     end_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                  default=datetime.datetime.now)
+    archived = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
     user = orm.relation('User')
     images = orm.relation('Image', back_populates='post')
     comments = orm.relation('Comment', back_populates='post')
