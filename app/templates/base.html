@@ -28,6 +28,17 @@
 
                 <li><a href="/create_post">Создать объявление</a></li>
 
+                <li>
+                  <!-- <div class="input-group"> -->
+                    <form action='/search' method="POST">
+                      <input class="form-control border-end-0 border rounded-pill" name="search_input" type="text" placeholder="abc" id="search-input">
+                      <input value="search" type="submit"></input>
+                    </form>
+                    <!-- <span class="input-group-append"> -->
+                    <!-- </span> -->
+                  </div>
+                </li>
+
               </ul>
               <ul class="nav navbar-nav navbar-right">
                   {% if current_user.is_authenticated %}
@@ -52,5 +63,17 @@
     <main role="main" class="container">
         {% block content %}{% endblock %}
     </main>
+
+  <!-- <script>
+    const search_input = document.getElementById("search-input");
+    search_input.addEventListener('keydown', ({key}) => {
+      if (key === "Enter") {
+        var request = new XMLHttpRequest();
+        request.open("POST", '/search');
+        console.log(search_input.value);
+        request.send(search_input.value);
+      }
+    })
+  </script> -->
 </body>
 </html>

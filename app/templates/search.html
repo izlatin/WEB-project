@@ -1,42 +1,31 @@
-<head>
-    <meta charset="UTF-8">
-    <title>{{title}}</title>
-</head>
-<body>
-    {% extends "base.html" %}
-    {% block content %}
-        <h1></h1>
-        <form action="" method="POST" enctype="multipart/form-data">
-            {{ form.hidden_tag() }}
-            <p>
-                <!-- {{ form.title.label }}<br>
-                {{ form.title(class="form-control") }}<br>
-                {% for error in form.title.errors %}
-                    <p class="alert alert-danger" role="alert">
-                        {{ error }}
-                    </p>
-                {% endfor %} -->
-            </p>
-            <p>
-                <!-- {{ form.description.label }}<br>
-                {{ form.description(class="form-control") }}<br>
-                {% for error in form.description.errors %}
-                    <p content="alert alert-danger" role="alert">
-                        {{ error }}
-                    </p>
-                {% endfor %} -->
-            </p>
-            <p>
-                <!-- {{ form.tags.label }}<br>
-                {{ form.tags(class="form-control") }}<br>
-                {% for error in form.tags.errors %}
-                    <p content="alert alert-danger" role="alert">
-                        {{ error }}
-                    </p>
-                {% endfor %} -->
-            </p>
-
-        </form>
-    {% endblock %}
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+    {% for post, images in posts %}
+    <div class="well">
+        <div class="media">
+            <div class="media-body">
+              {% if post.creator == current_user.id %}
+                <a href="/delete_post/{{post.id}}"><button class="pull-right btn btn-danger">Delete</button></a>
+                <a href="/edit_post/{{post.id}}"><button class="pull-right btn btn-primary">Edit</button></a>
+              {% endif %}
+              <a href="/post/{{post.id}}"><h4 class="media-heading">{{ post.title }}</h4></a>
+                <p class="text-left">{{ post.user.name }} {{ post.user.surname }}</p>
+                <p class="text">{{ post.description }}</p>
+                <p class="text"> Tags: {{ post.tags }}</p>
+                {% for image in images %}
+                    <a class="pull-left" href="#">
+                        <img src="{{ image }}" width="100" style="padding-right: 10px">
+                    </a>
+                {% endfor %}
+            </div>
+            <p></p>
+            <ul class="list-inline list-unstyled">
+                <li><span><i class="glyphicon glyphicon-calendar"></i>{{ post.start_date }}</span></li>
+            </ul>
+            {% if current_user.is_authenticated and current_user.id != post.creator %}
+                <a href="/propose_barter/{{post.id}}"><button class="pull-right btn btn-success">Reply</button></a>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+{% endblock %}

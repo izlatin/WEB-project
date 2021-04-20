@@ -59,14 +59,14 @@
 
     <script>
         var id = {{ images[-1][0] }};
-<!--        var imgs = new Array();-->
-<!--        images_str = '{{ post.image }}' + ' ';-->
-            var imgs = new Array();
-            {% for image in images %}
-                imgs.push('{{image[1]}}');
-            {% endfor %};
-            images_str = '';
-            function submit() {
+<!--    var imgs = new Array();-->
+<!--    images_str = '{{ post.image }}' + ' ';-->
+        var imgs = new Array();
+        {% for image in images %}
+            imgs.push('{{image[1]}}');
+        {% endfor %};
+        images_str = '';
+        function submit() {
             let title = document.getElementById('title').value;
             let desc = document.getElementById('description').value;
             let tags = document.getElementById('tags').value;
@@ -85,7 +85,7 @@
             request.send(form);
             window.location = "/post_after_edited";
         }
-        /*
+    /*
         https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
         */
 
@@ -106,7 +106,7 @@
                         return function(){
                             output.src = reader.result;
                             imgs.push(output.src);
-    <!--                        console.log(files[i-1], i);-->
+    // <!--                        console.log(files[i-1], i);-->
                         };
                     })(output);
                     reader.readAsDataURL(files[i]);

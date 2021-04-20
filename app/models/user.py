@@ -25,6 +25,7 @@ class User(SqlAlchemyBase, UserMixin):
                                       default=datetime.datetime.now)
 
     posts = relation('Post', back_populates='user')
+    images = relation('Image', back_populates='user')
     
     oauth2_client = relation('OAuth2Client', back_populates='user', uselist=False)
     oauth2_code = relation('OAuth2AuthorizationCode', back_populates='user', uselist=False)

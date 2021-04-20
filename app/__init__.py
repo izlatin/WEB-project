@@ -20,6 +20,8 @@ from authlib.oauth2.rfc6749 import grants
 from authlib.oauth2.rfc7636 import CodeChallenge
 from sqlalchemy.sql.functions import user
 
+from flask_cloudy import Storage
+
 from . import db_session
 
 db_session.global_init('barter.db')
@@ -28,8 +30,13 @@ login_manager = LoginManager()
 
 db_sess = db_session.create_session()
 
+storage = Storage()
+
 from app.models import User
 from app.models import OAuth2Client, OAuth2Token, OAuth2AuthorizationCode
+
+if not os.path.exists('images'):
+    os.mkdir('images')
 
 
 class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
@@ -98,6 +105,7 @@ authorization = AuthorizationServer(
 )
 require_oauth = ResourceProtector()
 
+
 @login_manager.user_loader
 def load_user(userid):
     return db_sess.query(User).get(userid)
@@ -139,5 +147,16 @@ def create_app():
         'main': '/',
     }
     login_manager.unauthorized_handler(lambda: redirect(url_for('auth.login')))
+    
+    # register storage
+    app.config.update({
+        "STORAGE_PROVIDER": "LOCAL",
+        "STORAGE_CONTAINER": os.path.join(os.getcwd(), 'images'),
+        "STORAGE_KEY": "",
+        "STORAGE_SECRET": "",
+        "STORAGE_SERVER": True
+    })
+    storage.init_app(app)
+
     
     return app
