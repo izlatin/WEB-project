@@ -8,7 +8,6 @@ import base64
 from pathlib import Path
 import os
 
-
 from flask_login.utils import login_required
 from sqlalchemy import desc, or_, and_
 
@@ -23,10 +22,12 @@ from flask_cloudy import FileStorage, Object
 
 bp = Blueprint('main', __name__)
 
+
 def async_action(f):
     @wraps(f)
     def wrapped(*args, **kwargs):
         return asyncio.run(f(*args, **kwargs))
+
     return wrapped
 
 
@@ -61,20 +62,20 @@ def create_post():
         db_sess.merge(current_user)
         db_sess.commit()
         db_sess.flush()
-    
+
         for i, base64_image in enumerate(request.form.get('images').split()):
             image = Image()
             image.user_id = current_user.id
             image.post_id = post.id
             image.image_id = i
-            
+
             db_sess.add(image)
             db_sess.commit()
             db_sess.flush()
-            
+
             image_stream = BytesIO(base64.b64decode(base64_image[22:]))
             storage.upload(FileStorage(image_stream, filename=f'image-{post.id}-{image.image_id}.png'))
-            
+
         db_sess.commit()
         return redirect('/')
     return render_template('add_post.html', title='Создание объявления',
@@ -102,7 +103,7 @@ def edit_post(post_id):
         post.description = request.form.get("description")
         post.tags = request.form.get("tags")
         post.creator = current_user.id
-        
+
         current_user.posts.append(post)
         db_sess.merge(current_user)
         db_sess.commit()
@@ -126,7 +127,7 @@ def edit_post(post_id):
 
         db_sess.commit()
         return redirect('/')
-    
+
     images = db_sess.query(Image).filter_by(post_id=post.id).all()
     urls = []
     for i, image in enumerate(images):
@@ -165,7 +166,7 @@ def post(post_id):
     images = db_sess.query(Image).filter(Image.post_id == post_id).all()
     urls = []
     for i, image in enumerate(images):
-        image_file = storage.get(f'image-{post.id}-{image.image_id}.png')
+        image_file = storage.get(f'image-{post_id}-{image.image_id}.png')
         if image_file:
             urls.append([i, image_file.url])
     return render_template('post.html', post=cur_post, images=urls, replies_num=replies_num,
@@ -287,7 +288,7 @@ def post_replies(post_id):
         urls = []
         images = db_sess.query(Image).filter(Image.post_id == item.id).all()
         for i, image in enumerate(images):
-            image_file = storage.get(f'image-{post.id}-{image.image_id}.png')
+            image_file = storage.get(f'image-{post_id}-{image.image_id}.png')
             if image_file:
                 urls.append([i, image_file.url])
         data.append([item, urls])
@@ -311,21 +312,21 @@ def archive():
 def search():
     if request.method == 'GET':
         return render_template('search.html')
-    
+
     if 'search_input' not in request.form:
         return redirect(url_for('.index'))
-    
+
     keywords = request.form['search_input'].split()
     search_keywords_title = []
     search_keywords_description = []
     for keyword in keywords:
         search_keywords_title.append(Post.title.like('%' + keyword + '%'))
         search_keywords_description.append(Post.description.like('%' + keyword + '%'))
-        
+
     posts = db_sess.query(Post).filter(
         or_(*search_keywords_title,
             *search_keywords_description)
-        ).all()
+    ).all()
     data = []
     for post in posts:
         images = db_sess.query(Image).filter_by(post_id=post.id).all()
@@ -334,7 +335,6 @@ def search():
             image_obj = storage.get(f'image-{post.id}-{image.image_id}.png')
             if image_obj and isinstance(image_obj, Object):
                 urls.append(image_obj.url)
-        
-        
+
         data.append([post, urls])
     return render_template('index.html', posts=data)

@@ -106,7 +106,7 @@ def change_password():
     form = ChangePasswordForm()
     if not form.validate_on_submit():
         return render_template('change_password.html', form=form, user=user)
-    
+
     checked = user.check_password(form.old_password.data)
     if checked and form.new_password.data == form.repeat_password.data:
         user.set_password(form.new_password.data)

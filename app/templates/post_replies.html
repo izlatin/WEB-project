@@ -1,25 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Replies</h1>
-    {% for post, images in replies %}
-    <div class="well">
-        <div class="media">
-            <div class="media-body">
-              <a href="/delete_post/{{post.id}}"><button class="pull-right btn btn-danger">Delete</button></a>
-              <a href="/edit_post/{{post.id}}"><button class="pull-right btn btn-primary">Edit</button></a>
-              <a href="/post/{{post.id}}"><h4 class="media-heading">{{ post.title }}</h4></a>
-                <p class="text-left">{{ post.user.name }} {{ post.user.surname }}</p>
-                {% for image in images%}
-                    <a class="pull-left" href="#">
-                        <img src="{{ image }}" width="100" style="padding-right: 10px">
-                    </a>
-                {% endfor %}
-            </div>
-            <p></p>
-            <ul class="list-inline list-unstyled">
-                <li><span><i class="glyphicon glyphicon-calendar"></i>{{ post.start_date }}</span></li>
-            </ul>
+<h1>Replies</h1>
+{% for post, images in replies %}
+<div class="well">
+    <div class="media">
+        <div class="media-body">
+            <a href="/delete_post/{{post.id}}">
+                <button class="pull-right btn btn-danger">Delete</button>
+            </a>
+            <a href="/edit_post/{{post.id}}">
+                <button class="pull-right btn btn-primary">Edit</button>
+            </a>
+            <a href="/post/{{post.id}}"><h4 class="media-heading">{{ post.title }}</h4></a>
+            <p class="text-left">{{ post.user.name }} {{ post.user.surname }}</p>
+            {% for image in images %}
+            <a class="pull-left" href="#">
+                <img src="{{ image[1] }}" width="100" style="padding-right: 10px">
+            </a>
+            {% endfor %}
         </div>
+        <p></p>
+        <ul class="list-inline list-unstyled">
+            <li><span><i class="glyphicon glyphicon-calendar"></i>{{ post.start_date }}</span></li>
+        </ul>
+        <a href="">
+            <button class="pull-right btn btn-success">Done</button>
+        </a>
     </div>
-    {% endfor %}
+</div>
+{% endfor %}
 {% endblock %}

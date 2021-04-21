@@ -2,79 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">-->
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<!--    <link rel="stylesheet" href="../static/css/base.css">-->
+    <!--    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <!--    <link rel="stylesheet" href="../static/css/base.css">-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <title>{{ title }}</title>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-inverse" style="font-size: 18px">
-          <div class="container-fluid">
+<header>
+    <nav class="navbar navbar-inverse" style="font-size: 18px">
+        <div class="container-fluid">
             <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-              <a class="navbar-brand" href="/">Barter It</a>
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">Barter It</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
-              <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav">
 
-                <li><a href="/create_post">Создать объявление</a></li>
+                    <li><a href="/create_post">Создать объявление</a></li>
 
-                <li>
-                  <!-- <div class="input-group"> -->
-                    <form class="form-inline" style="margin: 10px" action='/search' method="POST">
-                      <input class="form-control border-end-0 border rounded-pill" name="search_input"
-                             type="text" placeholder="abc" id="search-input">
-                      <input class="btn" value="search" type="submit" style="font-size: 15px, font-weight: bold">
-                    </form>
-                    <!-- <span class="input-group-append"> -->
-                    <!-- </span> -->
+                    <li>
+                        <!-- <div class="input-group"> -->
+                        <form class="form-inline" style="margin: 10px" action='/search' method="POST">
+                            <input class="form-control border-end-0 border rounded-pill" name="search_input"
+                                   type="text" placeholder="abc" id="search-input">
+                            <input class="btn" value="search" type="submit" style="font-size: 15px, font-weight: bold">
+                        </form>
+                        <!-- <span class="input-group-append"> -->
+                        <!-- </span> -->
 
-                </li>
-
-              </ul>
-
-              <ul class="nav navbar-nav navbar-right">
-                  {% if current_user.is_authenticated %}
-                    <li class="dropdown">
-                      <a class="dropdown-toggle" data-toggle="dropdown" href="/profile">{{current_user.name}}<span class="caret"></span></a>
-                      <ul class="dropdown-menu" style="font-size: 16px">
-                        <li><a href="/profile/my_posts">My posts</a></li>
-                        <li><a href="/profile/archive">Archive</a></li>
-                        <li><a href="/profile">Profile</a></li>
-                        <li><a href="/logout">Logout</a></li>
-                      </ul>
                     </li>
-                  {% else %}
-                        <li><a href="/register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                        <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                  {% endif %}
-              </ul>
-            </div>
-            </div>
-          </div>
-        </nav>
-    </header>
-    <main role="main" class="container">
-        {% block content %}{% endblock %}
-    </main>
 
-  <!-- <script>
-    const search_input = document.getElementById("search-input");
-    search_input.addEventListener('keydown', ({key}) => {
-      if (key === "Enter") {
-        var request = new XMLHttpRequest();
-        request.open("POST", '/search');
-        console.log(search_input.value);
-        request.send(search_input.value);
-      }
-    })
-  </script> -->
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_authenticated %}
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="/profile">{{current_user.name}}<span
+                                class="caret"></span></a>
+                        <ul class="dropdown-menu" style="font-size: 16px">
+                            <li><a href="/profile/my_posts">My posts</a></li>
+                            <li><a href="/profile/archive">Archive</a></li>
+                            <li><a href="/profile">Profile</a></li>
+                            <li><a href="/logout">Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li><a href="/register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                    <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        </div>
+    </nav>
+</header>
+<main role="main" class="container">
+    {% block content %}{% endblock %}
+</main>
+
+<!-- <script>
+  const search_input = document.getElementById("search-input");
+  search_input.addEventListener('keydown', ({key}) => {
+    if (key === "Enter") {
+      var request = new XMLHttpRequest();
+      request.open("POST", '/search');
+      console.log(search_input.value);
+      request.send(search_input.value);
+    }
+  })
+</script> -->
 </body>
 </html>

@@ -3,52 +3,52 @@
     <title>{{title}}</title>
 </head>
 <body>
-    {% extends "base.html" %}
-    {% block content %}
-        <h1>Создание объявления</h1>
-        <form action="/add_post" method="POST" enctype="multipart/form-data">
-            {{ form.hidden_tag() }}
-            <p>
-                {{ form.title.label }}<br>
-                {{ form.title(class="form-control", id="title") }}<br>
-                {% for error in form.title.errors %}
-                    <p class="alert alert-danger" role="alert">
-                        {{ error }}
-                    </p>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.description.label }}<br>
-                {{ form.description(class="form-control", id="description" )}}<br>
-                {% for error in form.description.errors %}
-                    <p content="alert alert-danger" role="alert">
-                        {{ error }}
-                    </p>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.tags.label }}<br>
-                {{ form.tags(class="form-control", onchange="loadFile", id="tags") }}<br>
-                {% for error in form.tags.errors %}
-                    <p content="alert alert-danger" role="alert">
-                        {{ error }}
-                    </p>
-                {% endfor %}
-            </p>
+{% extends "base.html" %}
+{% block content %}
+<h1>Создание объявления</h1>
+<form action="/add_post" method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.title.label }}<br>
+        {{ form.title(class="form-control", id="title") }}<br>
+        {% for error in form.title.errors %}
+    <p class="alert alert-danger" role="alert">
+        {{ error }}
+    </p>
+    {% endfor %}
+    </p>
+    <p>
+        {{ form.description.label }}<br>
+        {{ form.description(class="form-control", id="description" )}}<br>
+        {% for error in form.description.errors %}
+    <p content="alert alert-danger" role="alert">
+        {{ error }}
+    </p>
+    {% endfor %}
+    </p>
+    <p>
+        {{ form.tags.label }}<br>
+        {{ form.tags(class="form-control", onchange="loadFile", id="tags") }}<br>
+        {% for error in form.tags.errors %}
+    <p content="alert alert-danger" role="alert">
+        {{ error }}
+    </p>
+    {% endfor %}
+    </p>
 
-        </form>
-        <p>
-            <td>Select Photo (one or multiple):</td>
-            <input id="fileinput" type="file" name="fileinput" onchange="loadFile()" multiple/>
-            <div id="media">
+</form>
+<p>
+<td>Select Photo (one or multiple):</td>
+<input id="fileinput" type="file" name="fileinput" onchange="loadFile()" multiple/>
+<div id="media">
 
-            </div>
-        </p>
-        <p>
-            <td colspan="2" align="center">Note: Supported image format: .jpeg, .jpg, .png, .gif</td>
-        </p>
-    <input type="submit" onclick="submit()" Submit>
-    <script>
+</div>
+</p>
+<p>
+<td colspan="2" align="center">Note: Supported image format: .jpeg, .jpg, .png, .gif</td>
+</p>
+<input type="submit" onclick="submit()" Submit>
+<script>
         var id = 0;
         var imgs = new Array();
         images_str = '';
@@ -130,7 +130,8 @@
             del_im.parentNode.removeChild(del_im);
         };
 
-    </script>
-    {% endblock %}
+
+</script>
+{% endblock %}
 </body>
 </html>
