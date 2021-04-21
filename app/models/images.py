@@ -1,12 +1,12 @@
 import datetime
 import sqlalchemy
 from sqlalchemy import orm
-
+from sqlalchemy_serializer import SerializerMixin
 
 from app import db_session
 
 
-class Image(db_session.SqlAlchemyBase):
+class Image(db_session.SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'image'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,

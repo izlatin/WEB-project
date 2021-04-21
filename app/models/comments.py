@@ -2,11 +2,12 @@ import datetime
 import sqlalchemy
 from sqlalchemy import orm
 # from sqlalchemy.orm import relationship
+from sqlalchemy_serializer import SerializerMixin
 
 from app import db_session
 
 
-class Comment(db_session.SqlAlchemyBase):
+class Comment(db_session.SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'comments'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,

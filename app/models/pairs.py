@@ -1,10 +1,10 @@
 import sqlalchemy
-
+from sqlalchemy_serializer import SerializerMixin
 
 from app import db_session
 
 
-class Pair(db_session.SqlAlchemyBase):
+class Pair(db_session.SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'pairs'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,

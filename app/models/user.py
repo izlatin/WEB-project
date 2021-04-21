@@ -1,5 +1,6 @@
 import datetime
 from flask_wtf import FlaskForm
+from sqlalchemy_serializer import SerializerMixin
 from wtforms import StringField, BooleanField, SubmitField, PasswordField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
@@ -11,7 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.db_session import SqlAlchemyBase
 
 
-class User(SqlAlchemyBase, UserMixin):
+class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     __tablename__ = 'users'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
@@ -26,6 +27,7 @@ class User(SqlAlchemyBase, UserMixin):
 
     posts = relation('Post', back_populates='user')
     images = relation('Image', back_populates='user')
+    comments = relation('Comment', back_populates='user')
     
     oauth2_client = relation('OAuth2Client', back_populates='user', uselist=False)
     oauth2_code = relation('OAuth2AuthorizationCode', back_populates='user', uselist=False)

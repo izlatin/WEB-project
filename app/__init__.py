@@ -134,10 +134,11 @@ def create_app():
     app.config['TESTING'] = False
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
-    from .routes import auth, main_page, oauth2
+    from .routes import auth, main_page, oauth2, api
     app.register_blueprint(main_page.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(oauth2.bp)
+    app.register_blueprint(api.bp)
     
     # init auth and oauth
     login_manager.init_app(app)

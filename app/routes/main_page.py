@@ -307,7 +307,6 @@ def archive():
     return render_template('post_replies.html', post=cur_post, images=images, replies_num=replies_num)
 
 
-# @login_required
 @bp.route('/search', methods=['GET', 'POST'])
 def search():
     if request.method == 'GET':
