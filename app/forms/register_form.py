@@ -10,7 +10,7 @@ class RegisterForm(FlaskForm):
     email = StringField('Email', validators=[Length(min=6, max=35), DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember me')
-    submit = SubmitField('Sign up me')
+    submit = SubmitField('Sign up')
 
 
 class EditProfileForm(FlaskForm):
