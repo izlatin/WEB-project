@@ -77,13 +77,11 @@
                             flag = true;
                         };
                     });
-                    imgs_old.forEach((el) => {
-                        if (Boolean(el)){
-                            flag = true;
-                        };
-                    });
+                    if (imgs_old.length != {{images_len}}){
+                        flag = true
+                    };
                     return flag;
-                };  
+                };
                 let title = document.getElementById('title').value;
                 let desc = document.getElementById('description').value;
                 let tags = document.getElementById('tags').value;

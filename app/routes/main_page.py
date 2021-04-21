@@ -156,7 +156,7 @@ def edit_post(post_id):
     form.title.data = post.title
     form.description.data = post.description
     form.tags.data = post.tags
-    return render_template('edit_post.html', form=form, post=post, images=urls)
+    return render_template('edit_post.html', form=form, post=post, images=urls, images_len=len(urls))
 
 
 @bp.route('/post/<int:post_id>', methods=['GET', 'POST'])
@@ -214,7 +214,7 @@ def delete_post(post_id):
     db_sess.query(Post).filter(Post.id == post_id).delete()
     db_sess.query(Pair).filter(
         (Pair.original == post_id) | (
-            Pair.reply == post_id)).delete()
+                Pair.reply == post_id)).delete()
     db_sess.commit()
     return redirect('/index')
 
