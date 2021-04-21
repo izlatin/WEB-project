@@ -337,3 +337,8 @@ def search():
 
         data.append([post, urls])
     return render_template('index.html', posts=data)
+
+
+@bp.route('/api_info')
+def api_info():
+    return render_template('api_info.html')

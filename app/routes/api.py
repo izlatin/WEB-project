@@ -33,6 +33,7 @@ def api_comments(post_id):
 
 @bp.route('/api/search/<string:keywords>')
 def api_search(keywords):
+    keywords = keywords.split('_')
     search_keywords_title = []
     search_keywords_description = []
     for keyword in keywords:
