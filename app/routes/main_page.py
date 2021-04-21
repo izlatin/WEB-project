@@ -162,7 +162,13 @@ def post(post_id):
         db_sess.merge(cur_post)
         db_sess.commit()
         return redirect(f'/post/{post_id}')
-    return render_template('post.html', post=cur_post, images=images, replies_num=replies_num,
+    images = db_sess.query(Image).filter(Image.post_id == post_id).all()
+    urls = []
+    for i, image in enumerate(images):
+        image_file = storage.get(f'image-{post.id}-{image.image_id}.png')
+        if image_file:
+            urls.append([i, image_file.url])
+    return render_template('post.html', post=cur_post, images=urls, replies_num=replies_num,
                            comment_form=comment_form, comments=post_comments, authors=authors_ids)
 
 
@@ -217,7 +223,12 @@ def edit_comment(comment_id):
 def propose_barter(post_id):
     form = PostForm()
     reply_to = db_sess.query(Post).filter(Post.id == post_id).first()
-    images = reply_to.image.split()
+    images = db_sess.query(Image).filter(Image.post_id == post_id).all()
+    urls = []
+    for i, image in enumerate(images):
+        image_file = storage.get(f'image-{post_id}-{image.image_id}.png')
+        if image_file:
+            urls.append([i, image_file.url])
     pair = Pair()
     if request.method == "POST":
         post = Post()
@@ -225,18 +236,32 @@ def propose_barter(post_id):
         post.description = request.form.get("description")
         post.tags = request.form.get("tags")
         post.creator = current_user.id
-        post.image = request.form.get("images")
         current_user.posts.append(post)
         db_sess.merge(current_user)
         db_sess.commit()
         db_sess.flush()
+
+        for i, base64_image in enumerate(request.form.get('images').split()):
+            image = Image()
+            image.user_id = current_user.id
+            image.post_id = post.id
+            image.image_id = i
+
+            db_sess.add(image)
+            db_sess.commit()
+            db_sess.flush()
+
+            image_stream = BytesIO(base64.b64decode(base64_image[22:]))
+            storage.upload(FileStorage(image_stream, filename=f'image-{post.id}-{image.image_id}.png'))
+
+        db_sess.commit()
         pair.original = reply_to.id
         pair.reply = post.id
         db_sess.merge(pair)
         db_sess.commit()
         return redirect('/')
     return render_template('propose_barter.html', title='Предложить обмен', form=form,
-                           images=images, reply_to=reply_to)
+                           images=urls, reply_to=reply_to)
 
 
 @bp.route('/post_after_proposed')
@@ -257,10 +282,15 @@ def post_replies(post_id):
         for p in q:
             posts.append(p)
     posts.sort(key=lambda x: x.start_date, reverse=True)
-    images = list(map(lambda x: x.image.split(), posts))
     data = []
-    for i in range(len(images)):
-        data.append([posts[i], images[i]])
+    for item in posts:
+        urls = []
+        images = db_sess.query(Image).filter(Image.post_id == item.id).all()
+        for i, image in enumerate(images):
+            image_file = storage.get(f'image-{post.id}-{image.image_id}.png')
+            if image_file:
+                urls.append([i, image_file.url])
+        data.append([item, urls])
     return render_template('post_replies.html', replies=data)
 
 
