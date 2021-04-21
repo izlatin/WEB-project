@@ -84,12 +84,18 @@ def create_post():
 
 @bp.route('/profile/my_posts')
 def my_posts():
-    posts = db_sess.query(Post).filter(
-        Post.creator == current_user.id).order_by(desc(Post.start_date)).all()
-    images = list(map(lambda x: x.image.split(), posts))
+    posts = db_sess.query(Post).filter(Post.archived == False,
+                                       Post.creator == current_user.id).order_by(desc(Post.start_date)).all()
     data = []
-    for i in range(len(images)):
-        data.append([posts[i], images[i]])
+    for post in posts:
+        images = db_sess.query(Image).filter_by(post_id=post.id).all()
+        urls = []
+        for image in images:
+            image_obj = storage.get(f'image-{post.id}-{image.image_id}.png')
+            if image_obj and isinstance(image_obj, Object):
+                urls.append(image_obj.url)
+
+        data.append([post, urls])
     return render_template('my_posts.html', posts=data)
 
 
