@@ -70,7 +70,8 @@ def authorize():
                 end_user=current_user)
         except OAuth2Error as error:
             return error.error
-        return render_template('authorize.html', user=current_user, grant=grant)
+        return render_template(
+            'authorize.html', user=current_user, grant=grant)
     if not current_user and 'email' in request.form:
         email = request.form.get('email')
         user = db_sess.query(User).filter_by(email=email).first()

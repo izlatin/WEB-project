@@ -38,7 +38,8 @@ def api_search(keywords):
     search_keywords_description = []
     for keyword in keywords:
         search_keywords_title.append(Post.title.like('%' + keyword + '%'))
-        search_keywords_description.append(Post.description.like('%' + keyword + '%'))
+        search_keywords_description.append(
+            Post.description.like('%' + keyword + '%'))
 
     posts = db_sess.query(Post).filter(
         or_(*search_keywords_title,

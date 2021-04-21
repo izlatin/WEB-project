@@ -28,11 +28,19 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     posts = relation('Post', back_populates='user')
     images = relation('Image', back_populates='user')
     comments = relation('Comment', back_populates='user')
-    
-    oauth2_client = relation('OAuth2Client', back_populates='user', uselist=False)
-    oauth2_code = relation('OAuth2AuthorizationCode', back_populates='user', uselist=False)
-    oauth2_token = relation('OAuth2Token', back_populates='user', uselist=False)
-    
+
+    oauth2_client = relation(
+        'OAuth2Client',
+        back_populates='user',
+        uselist=False)
+    oauth2_code = relation(
+        'OAuth2AuthorizationCode',
+        back_populates='user',
+        uselist=False)
+    oauth2_token = relation(
+        'OAuth2Token',
+        back_populates='user',
+        uselist=False)
 
     def __repr__(self):
         return f'<User> {self.id} {self.name} {self.surname}'

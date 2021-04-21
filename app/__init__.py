@@ -1,28 +1,27 @@
-import os
-# TODO ONLY for DEBUG to allow http requests instead of https
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
-
-from flask import Flask, render_template, redirect, url_for
-from flask_login import current_user, LoginManager, login_user
-
-from authlib.integrations.flask_oauth2 import (
-    AuthorizationServer,
-    ResourceProtector,
-)
-from flask_oauthlib.provider import OAuth2Provider
+from app.models import OAuth2Client, OAuth2Token, OAuth2AuthorizationCode
+from app.models import User
+from . import db_session
+from flask_cloudy import Storage
+from sqlalchemy.sql.functions import user
+from authlib.oauth2.rfc7636 import CodeChallenge
+from authlib.oauth2.rfc6749 import grants
 from authlib.integrations.sqla_oauth2 import (
     create_query_client_func,
     create_save_token_func,
     create_revocation_endpoint,
     create_bearer_token_validator,
 )
-from authlib.oauth2.rfc6749 import grants
-from authlib.oauth2.rfc7636 import CodeChallenge
-from sqlalchemy.sql.functions import user
+from flask_oauthlib.provider import OAuth2Provider
+from authlib.integrations.flask_oauth2 import (
+    AuthorizationServer,
+    ResourceProtector,
+)
+from flask_login import current_user, LoginManager, login_user
+from flask import Flask, render_template, redirect, url_for
+import os
+# TODO ONLY for DEBUG to allow http requests instead of https
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
 
-from flask_cloudy import Storage
-
-from . import db_session
 
 db_session.global_init('barter.db')
 
@@ -32,8 +31,6 @@ db_sess = db_session.create_session()
 
 storage = Storage()
 
-from app.models import User
-from app.models import OAuth2Client, OAuth2Token, OAuth2AuthorizationCode
 
 if not os.path.exists('images'):
     os.mkdir('images')
@@ -85,7 +82,8 @@ class PasswordGrant(grants.ResourceOwnerPasswordCredentialsGrant):
 
 class RefreshTokenGrant(grants.RefreshTokenGrant):
     def authenticate_refresh_token(self, refresh_token):
-        token = db_sess.query(OAuth2Token).filter_by(refresh_token=refresh_token).first()
+        token = db_sess.query(OAuth2Token).filter_by(
+            refresh_token=refresh_token).first()
         if token and token.is_refresh_token_active():
             return token
 
@@ -96,7 +94,8 @@ class RefreshTokenGrant(grants.RefreshTokenGrant):
         credential.revoked = True
         db_sess.session.add(credential)
         db_sess.session.commit()
-        
+
+
 query_client = create_query_client_func(db_sess, OAuth2Client)
 save_token = create_save_token_func(db_sess, OAuth2Token)
 authorization = AuthorizationServer(
@@ -110,13 +109,17 @@ require_oauth = ResourceProtector()
 def load_user(userid):
     return db_sess.query(User).get(userid)
 
+
 def config_oauth(app):
     authorization.init_app(app)
 
     # support all grants
     authorization.register_grant(grants.ImplicitGrant)
     authorization.register_grant(grants.ClientCredentialsGrant)
-    authorization.register_grant(AuthorizationCodeGrant, [CodeChallenge(required=True)])
+    authorization.register_grant(
+        AuthorizationCodeGrant, [
+            CodeChallenge(
+                required=True)])
     authorization.register_grant(PasswordGrant)
     authorization.register_grant(RefreshTokenGrant)
 
@@ -127,6 +130,7 @@ def config_oauth(app):
     # protect resource
     bearer_cls = create_bearer_token_validator(db_sess, OAuth2Token)
     require_oauth.register_token_validator(bearer_cls())
+
 
 def create_app():
     app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -139,7 +143,7 @@ def create_app():
     app.register_blueprint(auth.bp)
     app.register_blueprint(oauth2.bp)
     app.register_blueprint(api.bp)
-    
+
     # init auth and oauth
     login_manager.init_app(app)
     config_oauth(app)
@@ -148,7 +152,7 @@ def create_app():
         'main': '/',
     }
     login_manager.unauthorized_handler(lambda: redirect(url_for('auth.login')))
-    
+
     # register storage
     app.config.update({
         "STORAGE_PROVIDER": "LOCAL",
@@ -159,5 +163,4 @@ def create_app():
     })
     storage.init_app(app)
 
-    
     return app

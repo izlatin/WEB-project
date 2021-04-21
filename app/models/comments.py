@@ -12,8 +12,12 @@ class Comment(db_session.SqlAlchemyBase, SerializerMixin):
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
-    author = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
-    post_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('posts.id'))
+    author = sqlalchemy.Column(
+        sqlalchemy.Integer,
+        sqlalchemy.ForeignKey('users.id'))
+    post_id = sqlalchemy.Column(
+        sqlalchemy.Integer,
+        sqlalchemy.ForeignKey('posts.id'))
     text = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     pub_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                  default=datetime.datetime.now)

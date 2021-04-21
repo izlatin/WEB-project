@@ -12,7 +12,9 @@ class Post(db_session.SqlAlchemyBase, SerializerMixin):
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    creator = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
+    creator = sqlalchemy.Column(
+        sqlalchemy.Integer,
+        sqlalchemy.ForeignKey('users.id'))
     description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     tags = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     start_date = sqlalchemy.Column(sqlalchemy.DateTime,
@@ -26,4 +28,3 @@ class Post(db_session.SqlAlchemyBase, SerializerMixin):
 
     def __repr__(self):
         return f'<Post> {self.title}'
-

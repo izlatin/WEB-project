@@ -35,7 +35,10 @@ def async_action(f):
 @bp.route('/')
 @bp.route('/index')
 def index():
-    posts = db_sess.query(Post).filter(Post.archived == False).order_by(desc(Post.start_date)).all()
+    posts = db_sess.query(Post).filter(
+        Post.archived == False).order_by(
+        desc(
+            Post.start_date)).all()
     data = []
     for post in posts:
         images = db_sess.query(Image).filter_by(post_id=post.id).all()
@@ -75,7 +78,10 @@ def create_post():
             db_sess.flush()
 
             image_stream = BytesIO(base64.b64decode(base64_image[22:]))
-            storage.upload(FileStorage(image_stream, filename=f'image-{post.id}-{image.image_id}.png'))
+            storage.upload(
+                FileStorage(
+                    image_stream,
+                    filename=f'image-{post.id}-{image.image_id}.png'))
 
         db_sess.commit()
         return redirect('/')
@@ -114,10 +120,13 @@ def edit_post(post_id):
         current_user.posts.append(post)
         db_sess.merge(current_user)
         db_sess.commit()
-        image_num = db_sess.query(Image).filter(Image.post_id == post_id).count()
+        image_num = db_sess.query(Image).filter(
+            Image.post_id == post_id).count()
         for url in request.form.get('images_deleted').split():
             image_id = int(url.split("/")[-1].split('.')[0].split('-')[-1])
-            db_sess.query(Image).filter(Image.post_id == post_id, Image.image_id == image_id).delete()
+            db_sess.query(Image).filter(
+                Image.post_id == post_id,
+                Image.image_id == image_id).delete()
             os.remove(f'images/{url.split("/")[-1]}')
         for i, base64_image in enumerate(request.form.get('images').split()):
             image = Image()
@@ -130,7 +139,10 @@ def edit_post(post_id):
             db_sess.flush()
 
             image_stream = BytesIO(base64.b64decode(base64_image[22:]))
-            storage.upload(FileStorage(image_stream, filename=f'image-{post.id}-{image.image_id}.png'))
+            storage.upload(
+                FileStorage(
+                    image_stream,
+                    filename=f'image-{post.id}-{image.image_id}.png'))
 
         db_sess.commit()
         return redirect('/')
@@ -157,7 +169,9 @@ def post(post_id):
 
     images = db_sess.query(Image).filter_by(post_id=post_id)
     comment_form = CommentForm()
-    post_comments = db_sess.query(Comment).filter(Comment.post_id == cur_post.id).order_by(Comment.pub_date)
+    post_comments = db_sess.query(Comment).filter(
+        Comment.post_id == cur_post.id).order_by(
+        Comment.pub_date)
     authors = db_sess.query(User).all()
     authors_ids = {}
     for author in authors:
@@ -198,14 +212,17 @@ def delete_post(post_id):
     db_sess.query(Image).filter_by(post_id=post_id).delete()
     db_sess.query(Comment).filter(Comment.post_id == post_id).delete()
     db_sess.query(Post).filter(Post.id == post_id).delete()
-    db_sess.query(Pair).filter((Pair.original == post_id) | (Pair.reply == post_id)).delete()
+    db_sess.query(Pair).filter(
+        (Pair.original == post_id) | (
+            Pair.reply == post_id)).delete()
     db_sess.commit()
     return redirect('/index')
 
 
 @bp.route('/delete_comment/<int:comment_id>')
 def delete_comment(comment_id):
-    post_id = db_sess.query(Comment).filter(Comment.id == comment_id).first().post_id
+    post_id = db_sess.query(Comment).filter(
+        Comment.id == comment_id).first().post_id
     db_sess.query(Comment).filter(Comment.id == comment_id).delete()
     db_sess.commit()
     return redirect(f'/post/{post_id}')
@@ -217,7 +234,8 @@ def edit_comment(comment_id):
     comment = db_sess.query(Comment).filter(Comment.id == comment_id).first()
     # form.text.data = comment.text
     if form.validate_on_submit():
-        cur_post = db_sess.query(Post).filter(Post.id == comment.post_id).first()
+        cur_post = db_sess.query(Post).filter(
+            Post.id == comment.post_id).first()
         post_id = cur_post.id
         comment.text = form.text.data
         cur_post.comments.append(comment)
@@ -259,7 +277,10 @@ def propose_barter(post_id):
             db_sess.flush()
 
             image_stream = BytesIO(base64.b64decode(base64_image[22:]))
-            storage.upload(FileStorage(image_stream, filename=f'image-{post.id}-{image.image_id}.png'))
+            storage.upload(
+                FileStorage(
+                    image_stream,
+                    filename=f'image-{post.id}-{image.image_id}.png'))
 
         pair.original = reply_to.id
         pair.reply = post.id
@@ -284,7 +305,10 @@ def post_replies(post_id):
     replies_ids = [item.reply for item in replies]
     posts = []
     for id in replies_ids:
-        q = db_sess.query(Post).filter(Post.id == id).order_by(desc(Post.start_date)).all()
+        q = db_sess.query(Post).filter(
+            Post.id == id).order_by(
+            desc(
+                Post.start_date)).all()
         for p in q:
             posts.append(p)
     posts.sort(key=lambda x: x.start_date, reverse=True)
@@ -297,12 +321,14 @@ def post_replies(post_id):
             if image_file:
                 urls.append([i, image_file.url])
         data.append([item, urls])
-    return render_template('post_replies.html', cur_post=cur_post, replies=data)
+    return render_template('post_replies.html',
+                           cur_post=cur_post, replies=data)
 
 
 @bp.route('/profile/archive')
 def archive():
-    posts = db_sess.query(Post).filter(Post.archived, Post.creator == current_user.id).all()
+    posts = db_sess.query(Post).filter(
+        Post.archived, Post.creator == current_user.id).all()
     data = []
     for post in posts:
         images = db_sess.query(Image).filter_by(post_id=post.id).all()
@@ -329,7 +355,8 @@ def search():
     search_keywords_description = []
     for keyword in keywords:
         search_keywords_title.append(Post.title.like('%' + keyword + '%'))
-        search_keywords_description.append(Post.description.like('%' + keyword + '%'))
+        search_keywords_description.append(
+            Post.description.like('%' + keyword + '%'))
 
     posts = db_sess.query(Post).filter(
         or_(*search_keywords_title,
@@ -361,8 +388,12 @@ def post_archive(post_id, reply_id):
     reply = db_sess.query(Post).filter(Post.id == reply_id).first()
     reply.archived = True
     reply.end_date = datetime.datetime.now()
-    db_sess.query(Pair).filter(Pair.original == original.id, Pair.reply != reply.id).delete()
-    db_sess.query(Pair).filter(Pair.reply == reply.id, Pair.original != original.id).delete()
+    db_sess.query(Pair).filter(
+        Pair.original == original.id,
+        Pair.reply != reply.id).delete()
+    db_sess.query(Pair).filter(
+        Pair.reply == reply.id,
+        Pair.original != original.id).delete()
     db_sess.merge(original)
     db_sess.merge(original)
     db_sess.commit()

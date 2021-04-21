@@ -12,8 +12,12 @@ class Image(db_session.SqlAlchemyBase, SerializerMixin):
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
     image_id = sqlalchemy.Column('image_id', sqlalchemy.Integer)
-    user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'))
-    post_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('posts.id'))
+    user_id = sqlalchemy.Column(
+        sqlalchemy.Integer,
+        sqlalchemy.ForeignKey('users.id'))
+    post_id = sqlalchemy.Column(
+        sqlalchemy.Integer,
+        sqlalchemy.ForeignKey('posts.id'))
     # image = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
     start_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                    default=datetime.datetime.now)
@@ -22,4 +26,3 @@ class Image(db_session.SqlAlchemyBase, SerializerMixin):
 
     def __repr__(self):
         return f'<Image> by {self.user.name} {self.user.surname}'
-

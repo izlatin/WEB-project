@@ -2,6 +2,7 @@ from app import create_app
 
 app = create_app()
 
+
 @app.after_request
 def add_header(r):
     """
@@ -13,5 +14,7 @@ def add_header(r):
     r.headers["Expires"] = "0"
     r.headers['Cache-Control'] = 'public, max-age=0'
     return r
+
+
 # app.run('127.0.0.1', debug=True, port=5000, ssl_context='adhoc')
 app.run('127.0.0.1', debug=True, port=5000)
