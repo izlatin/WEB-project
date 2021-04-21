@@ -247,7 +247,6 @@ def propose_barter(post_id):
         db_sess.merge(current_user)
         db_sess.commit()
         db_sess.flush()
-
         for i, base64_image in enumerate(request.form.get('images').split()):
             image = Image()
             image.user_id = current_user.id
@@ -261,10 +260,9 @@ def propose_barter(post_id):
             image_stream = BytesIO(base64.b64decode(base64_image[22:]))
             storage.upload(FileStorage(image_stream, filename=f'image-{post.id}-{image.image_id}.png'))
 
-        db_sess.commit()
         pair.original = reply_to.id
         pair.reply = post.id
-        db_sess.merge(pair)
+        db_sess.add(pair)
         db_sess.commit()
         return redirect('/')
     return render_template('propose_barter.html', title='Предложить обмен', form=form,

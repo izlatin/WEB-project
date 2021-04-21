@@ -95,7 +95,7 @@
                 form.append("tags", tags);
                 form.append("images", images_str);
                 var request = new XMLHttpRequest();
-                request.open("POST", "create_post");
+                request.open("POST", "{{reply_to_id}}");
                 request.send(form);
                 window.location = "/post_after_created";
               }
