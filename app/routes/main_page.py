@@ -1,3 +1,4 @@
+import datetime
 import time
 from functools import wraps
 
@@ -296,19 +297,23 @@ def post_replies(post_id):
             if image_file:
                 urls.append([i, image_file.url])
         data.append([item, urls])
-    return render_template('post_replies.html', replies=data)
+    return render_template('post_replies.html', cur_post=cur_post, replies=data)
 
 
 @bp.route('/profile/archive')
 def archive():
-    archived = db_sess.query(Post).filter(Post.archived, Post.creator == current_user.id).all()
-    images = list(map(lambda x: x.image.split(), archived))
+    posts = db_sess.query(Post).filter(Post.archived, Post.creator == current_user.id).all()
     data = []
-    for i in range(len(images)):
-        data.append([archived[i], images[i]])
+    for post in posts:
+        images = db_sess.query(Image).filter_by(post_id=post.id).all()
+        urls = []
+        for image in images:
+            image_obj = storage.get(f'image-{post.id}-{image.image_id}.png')
+            if image_obj and isinstance(image_obj, Object):
+                urls.append(image_obj.url)
+
+        data.append([post, urls])
     return render_template('archive.html', posts=data)
-    images = cur_post.image.split()
-    return render_template('post_replies.html', post=cur_post, images=images, replies_num=replies_num)
 
 
 @bp.route('/search', methods=['GET', 'POST'])
@@ -346,3 +351,19 @@ def search():
 @bp.route('/api_info')
 def api_info():
     return render_template('api_info.html')
+
+
+@bp.route('/post/<int:post_id>/archive/<int:reply_id>')
+def post_archive(post_id, reply_id):
+    original = db_sess.query(Post).filter(Post.id == post_id).first()
+    original.archived = True
+    original.end_date = datetime.datetime.now()
+    reply = db_sess.query(Post).filter(Post.id == reply_id).first()
+    reply.archived = True
+    reply.end_date = datetime.datetime.now()
+    db_sess.query(Pair).filter(Pair.original == original.id, Pair.reply != reply.id).delete()
+    db_sess.query(Pair).filter(Pair.reply == reply.id, Pair.original != original.id).delete()
+    db_sess.merge(original)
+    db_sess.merge(original)
+    db_sess.commit()
+    return redirect('/')
