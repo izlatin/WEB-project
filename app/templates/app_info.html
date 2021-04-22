@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 style="border: none;
+border-radius: 10px;
+width: 70%;
+background-color: yellow;">Here you can find useful information and tips!</h1>
+<ol style="font-size: 17px">
+    <li><span style="font-weight: bold; font-size: 20px">Creating a post</span><br>
+        To create a post you have be <a href="/login">authorized</a>.<br>Use 'create a post' button
+        to create a post - all fields have to be filled, one image is minimum.<br>No images - no posts!
+    </li>
+    <li><span style="font-weight: bold; font-size: 20px">Editing a post</span><br>
+        You can delete and edit your post:
+        <ul>
+            <li>Add or remove images</li>
+            <li>Edit text fields such as title, description and tags</li>
+            <li>You will NOT able to return back your post after deleting</li>
+        </ul>
+    </li>
+    <li><span style="font-weight: bold; font-size: 20px">Commenting</span><br>
+        Click the title of a post and post comment - anyone will be able to see it!<br>
+        Editing and deleting comments is also possible.
+    </li>
+    <li><span style="font-weight: bold; font-size: 20px">Replying</span><br>
+        The most interesting and useful
+        <ul>
+            <li>If want to propose a barter to someone's post - click "Reply" button</li>
+            <li>Replies to YOUR post you can see at your post's page (button "see replies")</li>
+            <li>If your barter is done, you got your wares - click the 'Done' button<br>
+                to add your post to archive
+            </li>
+        </ul>
+    </li>
+    <li><span style="font-weight: bold; font-size: 20px">Your info</span><br>
+        <ul>
+            <li>Access your profile, where you can edit your data, by clicking "Profile" in menu</li>
+            <li>All your posts are placed in your profile, use "My posts" in menu</li>
+            <li>Archived posts are in "Archive" also in menu</li>
+        </ul>
+    </li>
+    <li><span style="font-weight: bold; font-size: 20px">Search</span><br>
+        Use "search" field at the top of the site, we'll try to find your query
+    </li>
+    <li><span style="font-weight: bold; font-size: 20px">API</span><br>
+        <ul>
+            <li>Search post by id &#x2192; <b>/api/post/&#x3c;id&#x3e;</b></li>
+            <li>Search comments by post_id &#x2192; <b>/api/comments/&#x3c;post_id&#x3e;</b></li>
+            <li>Search posts by string string &#x2192; <b>/api/search/&#x3c;string&#x3e;</b>
+                (To use different words use _ as delimiter)
+            </li>
+        </ul>
+    </li>
+</ol>
+{% endblock %}

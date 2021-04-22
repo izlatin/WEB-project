@@ -375,9 +375,9 @@ def search():
     return render_template('index.html', posts=data)
 
 
-@bp.route('/api_info')
+@bp.route('/app_info')
 def api_info():
-    return render_template('api_info.html')
+    return render_template('app_info.html')
 
 
 @bp.route('/post/<int:post_id>/archive/<int:reply_id>')
