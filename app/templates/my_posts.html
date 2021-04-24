@@ -1,29 +1,108 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>My posts</h1>
-{% for post, images in posts %}
-<div class="well">
-    <div class="media">
-        <div class="media-body">
-            <a href="/delete_post/{{post.id}}">
-                <button class="pull-right btn btn-danger">Delete</button>
-            </a>
-            <a href="/edit_post/{{post.id}}">
-                <button class="pull-right btn btn-primary">Edit</button>
-            </a>
-            <a href="/post/{{post.id}}"><h4 class="media-heading">{{ post.title }}</h4></a>
-            <p class="text-left">{{ post.user.name }} {{ post.user.surname }}</p>
-            {% for image in images %}
-            <a class="pull-left" href="#">
-                <img src="{{ image }}" width="100" style="padding-right: 10px">
-            </a>
-            {% endfor %}
-        </div>
-        <p></p>
-        <ul class="list-inline list-unstyled">
-            <li><span><i class="glyphicon glyphicon-calendar"></i>{{ post.start_date }}</span></li>
-        </ul>
-    </div>
+<style>
+
+/* Style tab links */
+
+.tablink {
+    background-color: #555;
+    color: white;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 17px;
+    width: 50%;
+}
+
+.tablink:hover {
+    background-color: rgb(40, 167, 69);
+}
+.tabcontent {
+    display: none;
+    padding: 100px 20px;
+    height: 100%;
+}
+#my_posts {background-color: white;
+           outline: 5px solid #555;}
+#proposal {background-color: white;
+           outline: 5px solid #555;}
+</style>
+<div class="center">
+    <button class="tablink" onclick="openPage('my_posts', this, 'my_posts_btn')" id="my_posts_btn"
+    style="">My posts</button>
+    <button class="tablink" onclick="openPage('proposal', this, 'proposal_btn')" id="proposal_btn">Proposal</button>
 </div>
-{% endfor %}
+<div id="my_posts" class="tabcontent">
+    {% for post, images in posts %}
+    <div class="well">
+        <div class="media">
+            <div class="media-body">
+                <a href="/delete_post/{{post.id}}">
+                    <button class="pull-right btn btn-danger">Delete</button>
+                </a>
+                <a href="/edit_post/{{post.id}}">
+                    <button class="pull-right btn btn-primary">Edit</button>
+                </a>
+                <a href="/post/{{post.id}}"><h4 class="media-heading">{{ post.title }}</h4></a>
+                <p class="text-left">{{ post.user.name }} {{ post.user.surname }}</p>
+                {% for image in images %}
+                <a class="pull-left" href="#">
+                    <img src="{{ image }}" width="100" style="padding-right: 10px">
+                </a>
+                {% endfor %}
+            </div>
+            <p></p>
+            <ul class="list-inline list-unstyled">
+                <li><span><i class="glyphicon glyphicon-calendar"></i>{{ post.start_date }}</span></li>
+            </ul>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div id="proposal" class="tabcontent">
+    {% for post, images in proposal %}
+    <div class="well">
+        <div class="media">
+            <div class="media-body">
+                <a href="/delete_post/{{post.id}}">
+                    <button class="pull-right btn btn-danger">Delete</button>
+                </a>
+                <a href="/edit_post/{{post.id}}">
+                    <button class="pull-right btn btn-primary">Edit</button>
+                </a>
+                <a href="/post/{{post.id}}"><h4 class="media-heading">{{ post.title }}</h4></a>
+                <p class="text-left">{{ post.user.name }} {{ post.user.surname }}</p>
+                {% for image in images %}
+                <a class="pull-left" href="#">
+                    <img src="{{ image }}" width="100" style="padding-right: 10px">
+                </a>
+                {% endfor %}
+            </div>
+            <p></p>
+            <ul class="list-inline list-unstyled">
+                <li><span><i class="glyphicon glyphicon-calendar"></i>{{ post.start_date }}</span></li>
+            </ul>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<script>
+function openPage(pageName,elmnt, btn) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablink");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].style.backgroundColor = "";
+    }
+    document.getElementById(btn).style.backgroundColor = 'black'
+    document.getElementById(pageName).style.display = "block";
+
+}
+document.getElementById("my_posts_btn").click();
+</script>
 {% endblock %}

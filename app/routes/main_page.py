@@ -104,7 +104,19 @@ def my_posts():
                 urls.append(image_obj.url)
 
         data.append([post, urls])
-    return render_template('my_posts.html', posts=data)
+    proposal_data = []
+    for post in posts:
+        pairs = db_sess.query(Pair).filter(Pair.reply == post.id).first()
+        if pairs:
+            images = db_sess.query(Image).filter_by(post_id=post.id).all()
+            urls = []
+            for image in images:
+                image_obj = storage.get(f'image-{post.id}-{image.image_id}.png')
+                if image_obj and isinstance(image_obj, Object):
+                    urls.append(image_obj.url)
+
+            proposal_data.append([post, urls])
+    return render_template('my_posts.html', posts=data, proposal=proposal_data)
 
 
 @bp.route('/edit_post/<int:post_id>', methods=['GET', 'POST'])
