@@ -4,10 +4,10 @@ from wtforms.validators import DataRequired
 
 
 class CommentForm(FlaskForm):
-    text = TextAreaField('Ваш комментарий:', validators=[DataRequired()])
-    submit = SubmitField('Оставить комментарий')
+    text = TextAreaField('Your comment:', validators=[DataRequired()])
+    submit = SubmitField('Leave a comment')
 
 
 class EditCommentForm(FlaskForm):
-    text = TextAreaField('Ваш комментарий:', validators=[DataRequired()])
-    submit = SubmitField('Сохранить комментарий')
+    text = TextAreaField('Your comment:', validators=[DataRequired()])
+    submit = SubmitField('Save comment')
