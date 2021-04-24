@@ -120,19 +120,29 @@ def edit_post(post_id):
         current_user.posts.append(post)
         db_sess.merge(current_user)
         db_sess.commit()
-        image_num = db_sess.query(Image).filter(
-            Image.post_id == post_id).count()
-        for url in request.form.get('images_deleted').split():
+        to_delete = request.form.get('images_deleted').split()
+        for url in to_delete:
             image_id = int(url.split("/")[-1].split('.')[0].split('-')[-1])
             db_sess.query(Image).filter(
                 Image.post_id == post_id,
                 Image.image_id == image_id).delete()
             os.remove(f'images/{url.split("/")[-1]}')
+        rest_images = [file for file in os.listdir('images') if os.path.isfile(os.path.join('images', file))]
+        rest_images = list(filter(lambda x: int(x.split('-')[1]) == post_id, rest_images))
+        rest_images.sort(key=lambda x: int(x[:-4].split('-')[-1]))
+        for i in range(len(rest_images)):
+            img = db_sess.query(Image).filter(Image.post_id == post_id,
+                                        Image.image_id == int(rest_images[i][:-4].split('-')[-1])).first()
+            img.image_id = i
+            db_sess.merge(img)
+            db_sess.commit()
+            os.rename(os.path.join('images', rest_images[i]),
+                      os.path.join('images', f'image-{post_id}-{i}.png'))
         for i, base64_image in enumerate(request.form.get('images').split()):
             image = Image()
             image.user_id = current_user.id
             image.post_id = post.id
-            image.image_id = i + image_num
+            image.image_id = i + len(rest_images)
 
             db_sess.add(image)
             db_sess.commit()
