@@ -35,8 +35,7 @@ def async_action(f):
 @bp.route('/')
 @bp.route('/index')
 def index():
-    posts = db_sess.query(Post).filter(
-        Post.archived == False).order_by(
+    posts = db_sess.query(Post).order_by(
         desc(
             Post.start_date)).all()
     data = []
@@ -49,7 +48,9 @@ def index():
                 urls.append(image_obj.url)
 
         data.append([post, urls])
-    return render_template('index.html', posts=data)
+    not_archived = list(filter(lambda x: not x[0].archived, data))
+    archived = list(filter(lambda x: x[0].archived, data))
+    return render_template('index.html', posts=not_archived, posts_archived=archived)
 
 
 @bp.route("/create_post", methods=['GET', 'POST'])
@@ -382,7 +383,9 @@ def search():
                 urls.append(image_obj.url)
 
         data.append([post, urls])
-    return render_template('index.html', posts=data)
+    not_archived = list(filter(lambda x: not x[0].archived, data))
+    archived = list(filter(lambda x: x[0].archived, data))
+    return render_template('index.html', posts=not_archived, posts_archived=archived)
 
 
 @bp.route('/app_info')
