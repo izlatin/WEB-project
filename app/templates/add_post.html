@@ -106,7 +106,6 @@
                         return function(){
                             output.src = reader.result;
                             imgs.push(output.src);
-    <!--                        console.log(files[i-1], i);-->
                         };
                     })(output);
                     reader.readAsDataURL(files[i]);
@@ -118,7 +117,10 @@
                     delete_button.setAttribute('onclick', "deleteFile(" + String(id) + ")");
                     paragraph.appendChild(delete_button);
 
-                    document.getElementById('delete_' + String(id)).innerHTML = 'remove';
+                    var cross = document.createElement('img');
+                    cross.setAttribute('height', "20px");
+                    cross.src = "/files/cross.png";
+                    delete_button.appendChild(cross);
                 })(files[i]);
             };
         };
